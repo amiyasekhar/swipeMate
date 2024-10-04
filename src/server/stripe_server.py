@@ -9,17 +9,17 @@ app = Flask(__name__)
 
 load_dotenv()
 print()
-print("Correct env path: ", "/Users/amiyasekhar/Downloads/swipeMate/.env")
-print("API KEY: ", os.getenv('STRIPE_API_KEY'))
-print("WHSEC: ", os.getenv('WEBHOOK_SECRET'))
+# print("Correct env path: ", "/Users/amiyasekhar/Downloads/swipeMate/.env")
+# print("API KEY: ", os.getenv('STRIPE_API_KEY'))
+# print("WHSEC: ", os.getenv('WEBHOOK_SECRET'))
 
 # Set your secret key. Remember to replace this with your actual secret key.
 # stripe.api_key = "sk_test_51MIxt5KhH8zNT0eB8iLQwqDCpcFhhjQJhUHhc7YF99YfdgsfZ58FayYJwPTvtTokk195NMPVEpZ3rk56CsfrbzBi00SBkjyRrE"
 # webhook_endpoint_secret = "whsec_LG3tvZ1TnYUc9MpF2f9HFPR0n0Z94uOu"
 stripe.api_key = os.getenv('STRIPE_API_KEY')
-print(f"Loaded Stripe API Key: {stripe.api_key}")  # Debugging line
+# print(f"Loaded Stripe API Key: {stripe.api_key}")  # Debugging line
 webhook_endpoint_secret = os.getenv('WEBHOOK_SECRET')
-print(f"Loaded Webhook Secret: {webhook_endpoint_secret}")  # Debugging line
+# print(f"Loaded Webhook Secret: {webhook_endpoint_secret}")  # Debugging line
 
 # Determine the base directory of the script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
