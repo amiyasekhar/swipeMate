@@ -1,33 +1,26 @@
-# Base image, assuming you're using a Python Flask app
 FROM python:3.11-slim
 
-# Set environment variables to ensure Python runs in unbuffered and non-interactive mode
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install system dependencies
+# Install system packages needed for gpgme and other dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
     libgpgme-dev \
-    gpg \
+    gpgme \
+    build-essential \
     && apt-get clean
 
-# Create and set working directory
+# Set working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy requirements.txt first to leverage Docker layer caching
+COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip3 install --upgrade pip
-RUN pip3 install -r requirements.txt
+# Install Python dependencies with pip3
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Expose the port Flask will run on
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port your app will run on
 EXPOSE 3002
 
-# Set environment variables for Flask
-ENV FLASK_APP=src/server/stripe_server.py
-ENV FLASK_ENV=production
-
-# Command to run the Flask app
-CMD ["python", "src/server/stripe_server.py"]
+# Command to run your Flask application
+CMD ["python3", "src/server/stripe_server.py"]
