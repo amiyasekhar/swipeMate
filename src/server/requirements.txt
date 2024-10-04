@@ -69,7 +69,6 @@ google-crc32c
 google-pasta
 google-resumable-media
 googleapis-common-protos
-gpg
 grpcio
 gunicorn
 h11
