@@ -5,3 +5,4 @@ tensorflow
 numpy
 google-cloud-storage
 python-dotenv
+gunicorn

@@ -52,6 +52,8 @@ grpcio==1.64.1
     # via
     #   tensorboard
     #   tensorflow
+gunicorn==23.0.0
+    # via -r requirements.in
 h5py==3.11.0
     # via
     #   keras
@@ -97,6 +99,7 @@ optree==0.11.0
     # via keras
 packaging==24.1
     # via
+    #   gunicorn
     #   keras
     #   tensorboard
     #   tensorflow
