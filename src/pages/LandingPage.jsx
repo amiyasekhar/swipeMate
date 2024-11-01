@@ -5,8 +5,8 @@ import Screenshot1 from '../assets/images/screenshot1.png';
 import Screenshot2 from '../assets/images/screenshot2.png';
 
 // Load your publishable key from Stripe
-const stripePromise = loadStripe('pk_test_51MIxt5KhH8zNT0eBsdPFdzJKWvmFTUizm2dPrq2daAtaa8to4ODsN6sh1jqOjg2Qf5p4Q3UJcOaTybTcRk2x4hFO00gaUmgcqo');
-
+const stripePromise = loadStripe('pk_live_51MIxt5KhH8zNT0eBV69mSH0djmZ50vIKUR71fICATT4g1qC6K6psICHaEePSIfQQqRUvHCRajt5HrQSCLoQzq8Bj00hiQS4fwh');
+const renderBackend = 'https://swipemate.onrender.com'
 const LandingPage = () => {
   const [authToken, setAuthToken] = useState('');
 
@@ -14,24 +14,39 @@ const LandingPage = () => {
     const stripe = await stripePromise;
 
     // Call your backend to create the Checkout session
-    const response = await fetch('/create-checkout-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ authToken }),  // Include auth token in the request
-    });
+    let response;
+    try {
+      console.log("The auth token: ", authToken)
+      response = await fetch(`${renderBackend}/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ authToken }),  // Include auth token in the request
+      });
+    } catch (error) {
+      console.log("Error in creating checkout session: ", error)
+    }
 
-    const session = await response.json();
+    console.log("response: ", response)
+
+    let session; 
+    try {
+      const session = await response.json();
+    } catch (error) {
+      console.log("Error in retrieving session data ", error)
+    }
+
     console.log("session: ", session);
 
     // Redirect to Stripe Checkout
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.id,
-    });
-
-    if (result.error) {
-      console.error(result.error.message);
+    let result;
+    try {
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+    } catch (error) {
+      console.log("Error in redirecting to checkout: ", error)
     }
   };
 
@@ -89,7 +104,7 @@ const LandingPage = () => {
         <Grid container spacing={3} style={{ marginTop: '40px', marginBottom: '40px' }}>
           <Grid item xs={12}>
             <Typography variant="h4" component="h4" sx={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '2rem', fontFamily: 'Bebas Neue' }}>
-              Paste your auth token and pay $100 for 500 free swipes!
+              Paste your auth token and pay $20 for 500 free swipes!
             </Typography>
           </Grid>
 
