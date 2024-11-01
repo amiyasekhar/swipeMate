@@ -1,8 +1,0 @@
-flask
-stripe
-requests
-tensorflow
-numpy
-google-cloud-storage
-python-dotenv
-gunicorn
