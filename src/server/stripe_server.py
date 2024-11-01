@@ -38,7 +38,7 @@ def create_checkout_session():
                     'price_data': {
                         'currency': 'usd',
                         'product_data': {
-                            'name': 'SwipeMateAI',
+                            'name': 'SwipeMate AI',
                         },
                         'unit_amount': 2000,  # Amount in cents
                     },
