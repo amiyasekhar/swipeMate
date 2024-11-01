@@ -40,7 +40,7 @@ def create_checkout_session():
                         'product_data': {
                             'name': 'SwipeMateAI',
                         },
-                        'unit_amount': 2000,  # Amount in cents
+                        'unit_amount': 100,  # Amount in cents
                     },
                     'quantity': 1,
                 },
