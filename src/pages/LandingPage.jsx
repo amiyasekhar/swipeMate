@@ -6,7 +6,7 @@ import Screenshot2 from '../assets/images/screenshot2.png';
 
 // Load your publishable key from Stripe
 const stripePromise = loadStripe('pk_live_51MIxt5KhH8zNT0eBV69mSH0djmZ50vIKUR71fICATT4g1qC6K6psICHaEePSIfQQqRUvHCRajt5HrQSCLoQzq8Bj00hiQS4fwh');
-
+const renderBackend = 'https://swipemate.onrender.com'
 const LandingPage = () => {
   const [authToken, setAuthToken] = useState('');
 
@@ -17,7 +17,7 @@ const LandingPage = () => {
     let response;
     try {
       console.log("The auth token: ", authToken)
-      response = await fetch('/create-checkout-session', {
+      response = await fetch(`${renderBackend}/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
