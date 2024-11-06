@@ -151,7 +151,6 @@ nipype
 nltk
 notebook
 notebook_shim
-numpy
 openai
 opencv-python
 opt-einsum
