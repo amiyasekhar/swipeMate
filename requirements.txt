@@ -307,7 +307,6 @@ webencodings==0.5.1
 websocket-client==1.8.0
 Werkzeug==3.0.3
 widgetsnbextension==4.0.11
-wheel @ file:///opt/homebrew/Cellar/python%403.12/3.12.5/libexec/wheel-0.44.0-py3-none-any.whl#sha256=8d8a590e50bda8422000110e90bc730ebfcd8363d2de80793ac819b7f252e97d
 wrapt==1.16.0
 wsproto==1.2.0
 zstandard==0.18.0
