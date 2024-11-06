@@ -34,7 +34,7 @@ confection==0.1.5
 configobj==5.0.8
 configparser==7.1.0
 contextlib2==21.6.0
-contourpy==1.2.1
+contourpy
 cryptography==38.0.4
 cycler==0.12.1
 cymem==2.0.8
