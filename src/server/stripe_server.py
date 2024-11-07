@@ -1,11 +1,13 @@
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS # import CORS 
 import stripe
 import subprocess  # Add this import
 import json
 from dotenv import load_dotenv  # Import load_dotenv
 
 app = Flask(__name__)
+CORS(app, origins=["https://swipemate.ai"])
 
 load_dotenv()
 print()
