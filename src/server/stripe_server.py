@@ -48,7 +48,8 @@ def create_checkout_session():
             automatic_tax={'enabled': True},
             mode='payment',
             client_reference_id=auth_token,  # Set the auth token here
-            success_url=f'http://localhost:3000/checkout-success?authToken={auth_token}',
+            success_url=f'https://swipemate.ai/checkout-success?authToken={auth_token}',
+            #success_url=f'http://localhost:3000/checkout-success?authToken={auth_token}',
             cancel_url='https://your-website.com/cancel',
         )
         print(f"Created Stripe Checkout Session: {session.id}")
@@ -108,4 +109,5 @@ def webhook():
     return jsonify(success=True)
 
 if __name__ == '__main__':
-    app.run(port=3002, host='0.0.0.0')
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3002)))
+    #app.run(port=3002, host='0.0.0.0')
