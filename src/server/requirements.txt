@@ -23,3 +23,4 @@ googleapis-common-protos==1.63.2
 gpxpy==1.6.2
 stripe==10.9.0
 python-dotenv==1.0.0
+gunicorn
