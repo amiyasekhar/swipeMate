@@ -38,7 +38,7 @@ const LandingPage = () => {
       console.log("Error in retrieving session data ", error)
     }
 
-    console.log("response.json = ", response.json())
+    //console.log("response.json = ", response.json())
     console.log("session: ", session);
 
     // Redirect to Stripe Checkout
