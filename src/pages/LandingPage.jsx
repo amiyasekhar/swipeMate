@@ -33,6 +33,7 @@ const LandingPage = () => {
     let session; 
     try {
       const session = await response.json();
+      console.log("session: ", session)
     } catch (error) {
       console.log("Error in retrieving session data ", error)
     }
