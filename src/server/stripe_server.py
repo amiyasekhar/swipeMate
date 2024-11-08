@@ -57,6 +57,7 @@ def create_checkout_session():
             cancel_url='https://your-website.com/cancel',
         )
         print(f"Created Stripe Checkout Session: {session.id}")
+        print(f"Stripe Checkout url: {session.url}")
         print("server session data:", session)
         return jsonify({'id': session.id})
     except Exception as e:
