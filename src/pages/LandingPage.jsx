@@ -44,7 +44,7 @@ const LandingPage = () => {
     // Redirect to Stripe Checkout
     let result;
     try {
-      const result = await stripe.redirectToCheckout({
+        result = await stripe.redirectToCheckout({
         sessionId: session.id,
       });
     } catch (error) {
