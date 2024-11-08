@@ -1,13 +1,13 @@
 import os
 from flask import Flask, request, jsonify
-from flask_cors import CORS # import CORS 
+from flask_cors import CORS, cross_origin # import CORS 
 import stripe
 import subprocess  # Add this import
 import json
 from dotenv import load_dotenv  # Import load_dotenv
 
 app = Flask(__name__)
-CORS(app, origins=["https://swipemate.ai"])
+CORS(app, origins=["https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"])
 
 load_dotenv()
 print()
@@ -26,7 +26,9 @@ webhook_endpoint_secret = os.getenv('WEBHOOK_SECRET')
 # Determine the base directory of the script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 @app.route('/create-checkout-session', methods=['POST'])
+@cross_origin(origins='https://swipemate.ai')
 def create_checkout_session():
     data = json.loads(request.data)
     auth_token = data.get('authToken')
