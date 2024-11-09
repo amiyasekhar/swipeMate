@@ -59,7 +59,7 @@ def create_checkout_session():
         print(f"Created Stripe Checkout Session: {session.id}")
         print(f"Stripe Checkout url: {session.url}")
         print("server session data:", session)
-        return jsonify({'id': session.id})
+        return jsonify({'id': session.id, 'url': session.url})
     except Exception as e:
         print(f"Error creating checkout session: {e}")
         return jsonify(error=str(e)), 500

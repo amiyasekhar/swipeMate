@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Button, Typography, Container, TextField } from '@mui/material';
 import { loadStripe } from '@stripe/stripe-js';
+import { useNavigate } from 'react-router-dom';
 import Screenshot1 from '../assets/images/screenshot1.png';
 import Screenshot2 from '../assets/images/screenshot2.png';
 
@@ -9,6 +10,7 @@ const stripePromise = loadStripe('pk_live_51MIxt5KhH8zNT0eBV69mSH0djmZ50vIKUR71f
 const renderBackend = 'https://swipemate.onrender.com'
 const LandingPage = () => {
   const [authToken, setAuthToken] = useState('');
+  const navigate = useNavigate();
 
   const handlePayNow = async () => {
     const stripe = await stripePromise;
@@ -44,9 +46,10 @@ const LandingPage = () => {
     // Redirect to Stripe Checkout
     let result;
     try {
-        result = await stripe.redirectToCheckout({
-        sessionId: session.id,
-      });
+      window.location.href = session.url;
+      //   result = await stripe.redirectToCheckout({
+      //   sessionId: session.id,
+      // });
     } catch (error) {
       console.log("Error in redirecting to checkout: ", error)
     }
