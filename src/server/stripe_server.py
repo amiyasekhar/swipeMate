@@ -100,6 +100,7 @@ def webhook():
 
             # Run Tinder script with the constructed relative path and auth token
             print('Payment was successful! Now we can run the Tinder scripts')
+            print("tinder script should run here")
             subprocess.run(["python3", tinder_script_path, auth_token])
             '''
             print('Payment was successful! Now we can run the Tinder scripts')

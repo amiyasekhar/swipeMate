@@ -169,12 +169,14 @@ with open('profiles.txt', 'a') as file:
                     time.sleep(random.uniform(3, 5))
                     print(f"{user_id} is attractive")
                     if right_swipes < 500:
-                        like_profile(user_id)
+                        print("Liking profile print instead of liking (right swipe)")
+                        #like_profile(user_id)
 
                 else:
                     time.sleep(random.uniform(3, 5))
                     print(f"{user_id} is unattractive")
-                    pass_profile(user_id, s_number)
+                    print("left swipe for now ")
+                    #pass_profile(user_id, s_number)
             
             # Pause for a random duration between 3 to 5 seconds
             time.sleep(random.uniform(3, 5))
