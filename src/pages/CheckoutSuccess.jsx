@@ -15,7 +15,7 @@ const CheckoutSuccess = () => {
         Payment Successful!
       </Typography>
       <Typography variant="h5" component="p" gutterBottom>
-        Thank you for your purchase. Your 500 swipes have been added to your account.
+        Thank you for your purchase. Watch out for the flood of woman!
       </Typography>
       <Button 
         variant="contained" 

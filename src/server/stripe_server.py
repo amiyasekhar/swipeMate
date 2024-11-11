@@ -52,9 +52,9 @@ def create_checkout_session():
             automatic_tax={'enabled': True},
             mode='payment',
             client_reference_id=auth_token,  # Set the auth token here
-            success_url=f'https://swipemate.ai/checkout-success?authToken={auth_token}',
+            success_url=f'https://swipemate.aihttps://swipemate.ai/checkout-success?authToken={auth_token}',
             #success_url=f'http://localhost:3000/checkout-success?authToken={auth_token}',
-            cancel_url='https://your-website.com/cancel',
+            cancel_url='https://swipemate.ai/checkout-success',
         )
         print(f"Created Stripe Checkout Session: {session.id}")
         print(f"Stripe Checkout url: {session.url}")

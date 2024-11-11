@@ -69,7 +69,7 @@ const LandingPage = () => {
             <Grid container direction="column" alignItems="center" justifyContent="center" height="100%">
               <Grid item>
                 <Typography variant="h2" component="h2" sx={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '4.5rem', fontFamily: 'Bebas Neue' }}>
-                  Let AI swipe your Tinder! Go from single to in-demand in 3 easy steps
+                  Go from simping to pimping!
                 </Typography>
               </Grid>
             </Grid>
@@ -109,7 +109,7 @@ const LandingPage = () => {
         <Grid container spacing={3} style={{ marginTop: '40px', marginBottom: '40px' }}>
           <Grid item xs={12}>
             <Typography variant="h4" component="h4" sx={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '2rem', fontFamily: 'Bebas Neue' }}>
-              Paste your auth token and pay $20 for 500 free swipes!
+              Paste your auth token and pay $20 get 500 free right swipes!
             </Typography>
           </Grid>
 
