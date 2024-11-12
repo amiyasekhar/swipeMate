@@ -110,24 +110,26 @@ with open('profiles.txt', 'a') as file:
         if stop_after_limit and total_users >= profile_limit:
             break
 
+        # Define a random number of swipes for this batch (between 10 and 15)
+        swipes_in_batch = random.randint(10, 15)
+        swipes_done = 0  # Counter for this batch
+
         # Make the request to the Tinder API
         data = get_profiles_with_rate_limiting(url, headers)
         
         # Check if data is not None and has results
         if data and 'results' in data['data']:
-            # Get the list of results
             results = data['data']['results']
             
-            # Check if results are empty
             if not results:
                 break
             
-            # Iterate over each user in the response
             for result in results:
                 if stop_after_limit and total_users >= profile_limit:
                     break
 
                 total_users += 1
+                swipes_done += 1  # Increment the swipe counter
 
                 user = result['user']
                 s_number = result['s_number']
@@ -135,51 +137,48 @@ with open('profiles.txt', 'a') as file:
                 user_name = user['name']
                 photo_urls = [photo['url'] for photo in user['photos']]
                 
-                # Write user details to the file
-                # file.write(f"Profile {total_users}\n")
-                # file.write(f"Name: {user_name}\n")
-                # file.write(f"User ID: {user_id}\n")
-                # file.write(f"S Number: {s_number}\n")
                 attractive_profile = False
                 for photo_url in photo_urls:
-                    # file.write(f"Photo URL: {photo_url}\n")
-                    print(f"Processing image: {photo_url}")  # Debug info
+                    print(f"Processing image: {photo_url}")
                     img, img_path = load_and_preprocess_image(photo_url)
                     if img is not None:
                         prediction = model.predict(img)
                         confidence = prediction[0][0]
                         label = 'attractive' if confidence > 0.5 else 'unattractive'
-                        # file.write(f"Photo is {label} with confidence {confidence}\n")
-                        print(f"Photo is {label} with confidence {confidence}")  # Debug info
+                        print(f"Photo is {label} with confidence {confidence}")
                         if confidence > 0.5:
                             attractive_profile = True
                             save_path = os.path.join(attractive_dir, f"1_TI_{image_counter}.jpg")
                         else:
                             save_path = os.path.join(unattractive_dir, f"0_TI_{image_counter}.jpg")
-                        print(f"Saving image to: {save_path}")  # Debug info
+                        print(f"Saving image to: {save_path}")
                         os.rename(img_path, save_path)
                         image_counter += 1
                 
                 profile_label = 'attractive' if attractive_profile else 'unattractive'
-                # file.write(f"Profile is {profile_label}\n")
-                # file.write("\n")
                 
-                # Like or pass on the profile based on the attractiveness
                 if attractive_profile:
                     time.sleep(random.uniform(3, 5))
                     print(f"{user_id} is attractive")
                     if right_swipes < 500:
-                        print("Liking profile print instead of liking (right swipe)")
-                        #like_profile(user_id)
-
+                        print("Liking profile (right swipe)")
+                        # like_profile(user_id)
                 else:
                     time.sleep(random.uniform(3, 5))
                     print(f"{user_id} is unattractive")
-                    print("left swipe for now ")
-                    #pass_profile(user_id, s_number)
-            
-            # Pause for a random duration between 3 to 5 seconds
-            time.sleep(random.uniform(3, 5))
+                    print("left swipe for now")
+                    # pass_profile(user_id, s_number)
+
+                # Check if we have reached the swipe limit for this batch
+                if swipes_done >= swipes_in_batch:
+                    # Pause for a random duration between 3 and 5 minutes
+                    print("Pausing between batches...")
+                    time.sleep(random.uniform(180, 300))
+                    # Reset swipe counter and set a new random swipe limit for the next batch
+                    swipes_done = 0
+                    swipes_in_batch = random.randint(10, 15)
+
+            time.sleep(random.uniform(3, 5))  # Short pause between each API request
         else:
             break
 
