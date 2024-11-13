@@ -4,7 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useNavigate } from 'react-router-dom';
 import Screenshot1 from '../assets/images/screenshot1.png';
 import Screenshot2 from '../assets/images/screenshot2.png';
-import { useNavigate } from 'react-router-dom';
+
 
 // Load your publishable key from Stripe
 const stripePromise = loadStripe('pk_live_51MIxt5KhH8zNT0eBV69mSH0djmZ50vIKUR71fICATT4g1qC6K6psICHaEePSIfQQqRUvHCRajt5HrQSCLoQzq8Bj00hiQS4fwh');
