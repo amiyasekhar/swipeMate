@@ -66,7 +66,7 @@ const LandingPage = () => {
         <Typography variant="h4" style={{ color: '#FFFFFF', flex: '0 1 auto' }}>
           SwipeMate
         </Typography>
-        <Button onClick={handleButtonClick}>Go to checkout success</Button>
+        <button onClick={handleButtonClick} style={{backgroundColor: 'black'}}>Go to checkout success</button>
       </div>
 
 
