@@ -4,6 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useNavigate } from 'react-router-dom';
 import Screenshot1 from '../assets/images/screenshot1.png';
 import Screenshot2 from '../assets/images/screenshot2.png';
+import { useNavigate } from 'react-router-dom';
 
 // Load your publishable key from Stripe
 const stripePromise = loadStripe('pk_live_51MIxt5KhH8zNT0eBV69mSH0djmZ50vIKUR71fICATT4g1qC6K6psICHaEePSIfQQqRUvHCRajt5HrQSCLoQzq8Bj00hiQS4fwh');
@@ -11,6 +12,10 @@ const renderBackend = 'https://swipemate.onrender.com'
 const LandingPage = () => {
   const [authToken, setAuthToken] = useState('');
   const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    navigate('/checkout-success');
+  }
 
   const handlePayNow = async () => {
     const stripe = await stripePromise;
@@ -61,7 +66,9 @@ const LandingPage = () => {
         <Typography variant="h4" style={{ color: '#FFFFFF', flex: '0 1 auto' }}>
           SwipeMate
         </Typography>
+        <Button onClick={handleButtonClick}>Go to checkout success</Button>
       </div>
+
 
       <Container style={{ paddingTop: '16px', paddingBottom: '16px', fontFamily: 'Bebas Neue' }}>
         <Grid container spacing={3}>
