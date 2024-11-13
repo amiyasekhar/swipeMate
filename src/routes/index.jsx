@@ -94,7 +94,7 @@ export const router = createBrowserRouter([
       },
             {
         path: "checkout-success",
-        element: <MainLayout />,
+        // element: <MainLayout />,
         children: [
           {
             index: true,
