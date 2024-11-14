@@ -10,21 +10,23 @@ app = Flask(__name__)
 CORS(app, origins=["https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"])
 
 load_dotenv()
-print()
-# print("Correct env path: ", "/Users/amiyasekhar/Downloads/swipeMate/.env")
-# print("API KEY: ", os.getenv('STRIPE_API_KEY'))
-# print("WHSEC: ", os.getenv('WEBHOOK_SECRET'))
-
-# Set your secret key. Remember to replace this with your actual secret key.
-# stripe.api_key = "sk_test_51MIxt5KhH8zNT0eB8iLQwqDCpcFhhjQJhUHhc7YF99YfdgsfZ58FayYJwPTvtTokk195NMPVEpZ3rk56CsfrbzBi00SBkjyRrE"
-# webhook_endpoint_secret = "whsec_LG3tvZ1TnYUc9MpF2f9HFPR0n0Z94uOu"
 stripe.api_key = os.getenv('STRIPE_API_KEY')
-# print(f"Loaded Stripe API Key: {stripe.api_key}")  # Debugging line
+
+if stripe.api_key:
+    print("Loaded Stripe API Key")  # Debugging line
+
 webhook_endpoint_secret = os.getenv('WEBHOOK_SECRET')
-# print(f"Loaded Webhook Secret: {webhook_endpoint_secret}")  # Debugging line
+if webhook_endpoint_secret:
+    print("Loaded Stripe Webhook Endpoint Secret)  # Debugging line
+
+webhook_endpoint_secret_backup = os.getenv('WEBHOOK_SECRET_BACKUP')
+if webhook_endpoint_secret_backup:
+    print("Loaded Stripe Webhook Endpoint Secret Backup")  # Debugging line
 
 # Determine the base directory of the script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR:
+    print("Loaded BASE_DIR")  # Debugging line
 
 
 @app.route('/create-checkout-session', methods=['POST'])
@@ -72,8 +74,23 @@ def webhook():
     sig_header = request.headers['STRIPE_SIGNATURE']
 
     try:
+        try: # Use normal webhook secret first
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, webhook_endpoint_secret  # Normal secret
+            )
+
+        except ValueError as e:
+            # Invalid payload
+            print(f"Invalid payload: {e}")
+            
+        except stripe.error.SignatureVerificationError as e:
+            # Invalid signature
+            print(f"Invalid signature: {e}")
+            
+    try: # Use backup webhook secret
+        print("Using backup webhook secret")
         event = stripe.Webhook.construct_event(
-            payload, sig_header, webhook_endpoint_secret  # Use the correct variable here
+            payload, sig_header, webhook_endpoint_secret_backup # Backup secret
         )
     except ValueError as e:
         # Invalid payload
@@ -87,9 +104,11 @@ def webhook():
     # Handle the event
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
+        print('Payment was successful! Now we can run the Tinder scripts')
         auth_token = session.get('client_reference_id')  # Fetch the auth token
         
         if auth_token:
+            print(f"We have auth token: {auth_token}")
             # Construct the relative path to the Tinder script
             tinder_script_path = os.path.join(BASE_DIR, '../tinder/tinder_script.py')
             print(f"Tinder script path: {tinder_script_path}")
@@ -99,9 +118,9 @@ def webhook():
             print(f"Normalised tinder script path: {tinder_script_path}")
 
             # Run Tinder script with the constructed relative path and auth token
-            print('Payment was successful! Now we can run the Tinder scripts')
             print("tinder script should run here")
             subprocess.run(["python3", tinder_script_path, auth_token])
+            
             '''
             print('Payment was successful! Now we can run the Tinder scripts')
             subprocess.run(["C:\\Program Files\\Python310\\python.exe", tinder_script_path, auth_token])
