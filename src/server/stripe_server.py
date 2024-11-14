@@ -73,32 +73,30 @@ def webhook():
     payload = request.data
     sig_header = request.headers['STRIPE_SIGNATURE']
 
-    try:
-        try: # Use normal webhook secret first
+    try: # Verify with normal webhook secret first
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, webhook_endpoint_secret  # Normal secret
+        )
+        print("Event verified using main webhook secret")
+    except stripe.error.SignatureVerificationError as e: # Normal secret didn't work
+        # Invalid signature
+        print(f"Error {e}. Invalid signature with main secret, trying backup secret")
+        try:
             event = stripe.Webhook.construct_event(
-                payload, sig_header, webhook_endpoint_secret  # Normal secret
+                payload, sig_header, webhook_endpoint_secret_backup # Backup secret
             )
+            print("Event verified using backup webhook secret")
+        except stripe.error.SignatureVerificationError as e:
+            print(f"Invalid signature with both secrets: {e}")
+            return jsonify(success=False), 400
 
         except ValueError as e:
-            # Invalid payload
-            print(f"Invalid payload: {e}")
-            
-        except stripe.error.SignatureVerificationError as e:
-            # Invalid signature
-            print(f"Invalid signature: {e}")
-            
-    try: # Use backup webhook secret
-        print("Using backup webhook secret")
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, webhook_endpoint_secret_backup # Backup secret
-        )
+            # Invalid payload with backup secret
+            print(f"Invalid payload with backup secret: {e}")
+            return jsonify(success=False), 400
     except ValueError as e:
-        # Invalid payload
-        print(f"Invalid payload: {e}")
-        return jsonify(success=False), 400
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        print(f"Invalid signature: {e}")
+        # Invalid payload with main secret
+        print(f"Invalid payload with normal secret: {e}")
         return jsonify(success=False), 400
 
     # Handle the event
