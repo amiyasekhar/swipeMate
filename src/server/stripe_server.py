@@ -17,7 +17,7 @@ if stripe.api_key:
 
 webhook_endpoint_secret = os.getenv('WEBHOOK_SECRET')
 if webhook_endpoint_secret:
-    print("Loaded Stripe Webhook Endpoint Secret)  # Debugging line
+    print("Loaded Stripe Webhook Endpoint Secret")  # Debugging line
 
 webhook_endpoint_secret_backup = os.getenv('WEBHOOK_SECRET_BACKUP')
 if webhook_endpoint_secret_backup:
