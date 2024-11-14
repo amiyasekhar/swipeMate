@@ -91,7 +91,7 @@ def webhook():
         
         if auth_token:
             # Construct the relative path to the Tinder script
-            tinder_script_path = os.path.join(BASE_DIR, '../tinder/tinder_script2.py')
+            tinder_script_path = os.path.join(BASE_DIR, '../tinder/tinder_script.py')
             print(f"Tinder script path: {tinder_script_path}")
 
             # Normalize the path (optional, for cross-platform compatibility)
