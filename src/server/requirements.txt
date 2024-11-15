@@ -24,3 +24,4 @@ gpxpy==1.6.2
 stripe==10.9.0
 python-dotenv==1.0.0
 gunicorn
+tensorflow==2.14.0
