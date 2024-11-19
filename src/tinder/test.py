@@ -1,31 +1,14 @@
 import tensorflow as tf
+from tensorflow import keras
 
-model_path = '/Users/amiyasekhar/Downloads/swipeMate/src/tinder/retrain2pt2.keras'
+# Check TensorFlow version
+print("TensorFlow version:", tf.__version__)
 
-# Check the model format
-try:
-    loaded_model = tf.keras.models.load_model(model_path)
-    print("Model loaded successfully!")
-    print("Model summary:")
-    loaded_model.summary()  # Print model architecture if it loads successfully
-except Exception as e:
-    print("Error loading model:", e)
+# Simple test model
+model = keras.Sequential([
+    keras.layers.Dense(10, input_shape=(5,), activation='relu'),
+    keras.layers.Dense(1, activation='sigmoid')
+])
 
-# Check if it's a SavedModel directory
-try:
-    if tf.saved_model.contains_saved_model(model_path):
-        print("The model is in SavedModel format.")
-    else:
-        print("The model is NOT in SavedModel format (it might be .keras or .h5).")
-except Exception as e:
-    print("Error while checking SavedModel format:", e)
-
-model_path = '/Users/amiyasekhar/Downloads/swipeMate/src/tinder/retrain2pt2.keras'
-
-# Load the model and check the version
-try:
-    loaded_model = tf.keras.models.load_model(model_path)
-    print("Model loaded successfully!")
-    print(f"Model saved with TensorFlow version: {tf.__version__}")
-except Exception as e:
-    print("Error loading model:", e)
+print("Model summary:")
+model.summary()

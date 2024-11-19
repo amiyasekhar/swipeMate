@@ -25,3 +25,6 @@ yarn-error.log*
 
 swift-park-378200-6cf2c2ee1a2f.json
 swift-park-378200-ed8b6bc06acb.json
+
+# directories
+/src/tinder/Profiles/
