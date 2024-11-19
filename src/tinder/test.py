@@ -1,14 +1,31 @@
 import tensorflow as tf
-import keras
-from tensorflow.keras.models import load_model
-from keras.models import load_model
-print("Keras Version", keras.__version__)
-print("Tf version", tf.__version__)
-model = load_model('/Users/amiyasekhar/Downloads/swipeMate/src/tinder/retrain2pt2.keras', custom_objects={)
-print("Model comp details", model.get_compile_config())  # Shows compilation details, which sometimes include versioning metadata
-print("Model Metadata:")
-print(model._keras_metadata if hasattr(model, "_keras_metadata") else "No Keras metadata found.")
-if model.optimizer:
-    print("Optimizer Config:", model.optimizer.get_config())  # Details of optimizer used
-else:
-    print("No optimizer found.")
+
+model_path = '/Users/amiyasekhar/Downloads/swipeMate/src/tinder/retrain2pt2.keras'
+
+# Check the model format
+try:
+    loaded_model = tf.keras.models.load_model(model_path)
+    print("Model loaded successfully!")
+    print("Model summary:")
+    loaded_model.summary()  # Print model architecture if it loads successfully
+except Exception as e:
+    print("Error loading model:", e)
+
+# Check if it's a SavedModel directory
+try:
+    if tf.saved_model.contains_saved_model(model_path):
+        print("The model is in SavedModel format.")
+    else:
+        print("The model is NOT in SavedModel format (it might be .keras or .h5).")
+except Exception as e:
+    print("Error while checking SavedModel format:", e)
+
+model_path = '/Users/amiyasekhar/Downloads/swipeMate/src/tinder/retrain2pt2.keras'
+
+# Load the model and check the version
+try:
+    loaded_model = tf.keras.models.load_model(model_path)
+    print("Model loaded successfully!")
+    print(f"Model saved with TensorFlow version: {tf.__version__}")
+except Exception as e:
+    print("Error loading model:", e)
