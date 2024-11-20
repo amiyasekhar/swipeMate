@@ -55,6 +55,7 @@ def create_checkout_session():
             mode='payment',
             discounts=[{
                 'coupon': 'promo_1QN0tgAnUfawcEVZfpnQVbBu',  # Replace with the ID of your Stripe coupon
+                'coupon': 'promo_1QNKW0AnUfawcEVZEZwugGFY'
             }],
             client_reference_id=auth_token,  # Set the auth token here
             success_url=f'https://swipemate.ai/checkout-success?authToken={auth_token}',
