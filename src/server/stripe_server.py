@@ -53,7 +53,7 @@ def create_checkout_session():
             ],
             automatic_tax={'enabled': True},
             mode='payment',
-            allow_promotion_codes=True
+            allow_promotion_codes=True,
             client_reference_id=auth_token,  # Set the auth token here
             success_url=f'https://swipemate.ai/checkout-success?authToken={auth_token}',
             #success_url=f'http://localhost:3000/checkout-success?authToken={auth_token}',
