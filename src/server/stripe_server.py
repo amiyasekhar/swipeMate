@@ -8,7 +8,7 @@ from dotenv import load_dotenv  # Import load_dotenv
 from monitor_requests import start_browser_with_debugging, monitor_chrome_requests
 
 app = Flask(__name__)
-CORS(app, origins=["https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"])
+CORS(app, origins=["https://swipemate.ai", "http://localhost:3000", "http://127.0.0.1:3000"], methods=["GET", "POST", "OPTIONS"])
 
 load_dotenv()
 stripe.api_key = os.getenv('STRIPE_API_KEY')
@@ -31,7 +31,7 @@ if BASE_DIR:
 
 
 @app.route('/create-checkout-session', methods=['POST'])
-@cross_origin(origins='https://swipemate.ai')
+@cross_origin(origins=["https://swipemate.ai", "http://localhost:3000", "http://127.0.0.1:3000"])
 def create_checkout_session():
     data = json.loads(request.data)
     auth_token = data.get('authToken')

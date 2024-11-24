@@ -6,6 +6,8 @@ import platform
 import requests
 import threading
 import pychrome
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 # Disable proxies for local connections
 os.environ["NO_PROXY"] = "localhost,127.0.0.1"
