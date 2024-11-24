@@ -31,6 +31,7 @@ def get_browser_choice():
 
 def start_browser_with_debugging(browser_name):
     if platform.system() == 'Darwin':  # macOS
+        print("Mac OS detected")
         if browser_name == 'chrome':
             cmd = ["open", "-a", "Google Chrome", "--args", "--remote-debugging-port=9222"]
             subprocess.Popen(cmd)
@@ -48,6 +49,7 @@ def start_browser_with_debugging(browser_name):
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
     elif platform.system() == 'Windows':
+        print("Windows Detected")
         if browser_name == 'chrome':
             chrome_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
             cmd = [chrome_path, "--remote-debugging-port=9222"]
@@ -180,19 +182,19 @@ def monitor_safari_requests():
     sys.exit(1)
 
 if __name__ == "__main__":
-    browser_choice = get_browser_choice()
+    # Automatically select Chrome for debugging
+    browser_choice = 'chrome'
 
+    # Start Chrome in debugging mode
     start_browser_with_debugging(browser_choice)
-    # Wait a bit for the browser to start
+
+    # Wait for the browser to start
     time.sleep(5)
 
-    if browser_choice == 'chrome':
+    # Monitor Chrome requests
+    try:
         token = monitor_chrome_requests()
         print(f"Returned Token: {token}")
-    elif browser_choice == 'firefox':
-        monitor_firefox_requests()
-    elif browser_choice == 'safari':
-        monitor_safari_requests()
-    else:
-        print(f"Unsupported browser: {browser_choice}")
+    except Exception as e:
+        print(f"Error while monitoring requests: {e}")
         sys.exit(1)

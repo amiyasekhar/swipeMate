@@ -7,6 +7,7 @@ import Screenshot2 from '../assets/images/screenshot2.png';
 // Load your publishable key from Stripe
 const stripePromise = loadStripe('pk_live_51MIxt5KhH8zNT0eBV69mSH0djmZ50vIKUR71fICATT4g1qC6K6psICHaEePSIfQQqRUvHCRajt5HrQSCLoQzq8Bj00hiQS4fwh');
 const renderBackend = 'https://swipemate.onrender.com'
+const localhostURL = 'http://localhost:3002';
 const LandingPage = () => {
     // References to sections
     const getStartedSectionRef = useRef(null);
@@ -23,7 +24,7 @@ const LandingPage = () => {
 
 const handleTinderLogin = async () => {
   try {
-    const response = await fetch(`${renderBackend}/tinder-login`, {
+    const response = await fetch(`${localhostURL}/tinder-login`, {
       method: "GET", 
       headers: {
         "Content-Type": "application/json", 
@@ -51,7 +52,7 @@ const handlePayNow = async () => {
     const stripe = await stripePromise;
 
     console.log("The auth token: ", authToken);
-    const response = await fetch(`${renderBackend}/create-checkout-session`, {
+    const response = await fetch(`${localhostURL}/create-checkout-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,28 +75,29 @@ const handlePayNow = async () => {
 };
 
 const retrieveAuthToken = async () => {
-  try {
-    const response = await fetch(`${renderBackend}/retrieve-auth-token`, {
-      method: "GET", 
-      headers: {
-        "Content-Type": "application/json", 
-      },
-    });
-
-    const data = await response.json();
-
-    if (response.ok && data.token) {
-      setAuthToken(data.token); // Update state with the retrieved token
-    } else {
-      throw new Error("Couldn't auto retrieve auth token.");
+    try {
+      const response = await fetch(`${localhostURL}/retrieve-auth-token`, {
+        method: "GET", 
+        headers: {
+          "Content-Type": "application/json", 
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok && data.token) {
+        setAuthToken(data.token); // Update state with the retrieved token
+      } else {
+        throw new Error(data.error || "Couldn't auto retrieve auth token.");
+      }
+    } catch (error) {
+      console.error(error);
+      setAuthTokenPlaceholder(
+        "Couldn't auto retrieve auth token. Please refresh the Tinder page or try logging into Tinder again."
+      );
     }
-  } catch (error) {
-    console.error(error);
-    setAuthTokenPlaceholder(
-      "Couldn't auto retrieve auth token. Please refresh the Tinder page or try logging into Tinder again."
-    );
-  }
 };
+  
 
 
 

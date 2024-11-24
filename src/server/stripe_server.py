@@ -8,7 +8,7 @@ from dotenv import load_dotenv  # Import load_dotenv
 from monitor_requests import start_browser_with_debugging, monitor_chrome_requests
 
 app = Flask(__name__)
-CORS(app, origins=["https://swipemate.ai", "http://localhost:3000", "http://127.0.0.1:3000"], methods=["GET", "POST", "OPTIONS"])
+CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000", "https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"], supports_credentials=True)
 
 load_dotenv()
 stripe.api_key = os.getenv('STRIPE_API_KEY')
@@ -70,11 +70,28 @@ def create_checkout_session():
     
 @app.route('/tinder-login', methods=['GET'])
 def tinder_login():
-    monitor_chrome_requests()
+    try:
+        start_browser_with_debugging('chrome')  # Start Chrome with debugging
+        return jsonify({"message": "Chrome started in debugging mode"}), 200
+    except Exception as e:
+        print(f"Error in /tinder-login: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/retrieve-auth-token', methods=['GET'])
 def retrieve_auth_token():
-    start_browser_with_debugging('chrome')
+    try:
+        # Call the monitor_chrome_requests function to start monitoring
+        x_auth_token = monitor_chrome_requests()
+        
+        # Check if the token was successfully retrieved
+        if x_auth_token:
+            return jsonify({"token": x_auth_token}), 200
+        else:
+            return jsonify({"error": "X-Auth-Token not found. Please ensure you are logged in to Tinder and try again."}), 404
+    except Exception as e:
+        print(f"Error in /retrieve-auth-token: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
