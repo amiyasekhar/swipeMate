@@ -5,7 +5,7 @@ import stripe
 import subprocess  # Add this import
 import json
 from dotenv import load_dotenv  # Import load_dotenv
-from monitor_requests import start_browser_with_debugging
+from monitor_requests import start_browser_with_debugging, monitor_chrome_requests
 
 app = Flask(__name__)
 CORS(app, origins=["https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"])
@@ -68,9 +68,13 @@ def create_checkout_session():
         print(f"Error creating checkout session: {e}")
         return jsonify(error=str(e)), 500
     
+@app.route('/tinder-login', methods=['GET'])
+def tinder_login():
+    monitor_chrome_requests()
+
 @app.route('/retrieve-auth-token', methods=['GET'])
 def retrieve_auth_token():
-    start_browser_with_debugging()
+    start_browser_with_debugging('chrome')
 
 @app.route('/webhook', methods=['POST'])
 def webhook():

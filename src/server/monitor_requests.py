@@ -10,7 +10,7 @@ import pychrome
 # Disable proxies for local connections
 os.environ["NO_PROXY"] = "localhost,127.0.0.1"
 
-'''
+
 def get_browser_choice():
     print("Select the browser you are using:")
     print("1. Google Chrome")
@@ -26,7 +26,6 @@ def get_browser_choice():
     else:
         print("Invalid choice.")
         sys.exit(1)
-'''
 
 def start_browser_with_debugging(browser_name):
     if platform.system() == 'Darwin':  # macOS

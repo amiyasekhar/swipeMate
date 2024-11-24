@@ -21,6 +21,27 @@ const LandingPage = () => {
     );
 
 
+const handleTinderLogin = async () => {
+  try {
+    const response = await fetch(`${renderBackend}/tinder-login`, {
+      method: "GET", 
+      headers: {
+        "Content-Type": "application/json", 
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok ) {
+    } else {
+      throw new Error("Error with logging in.");
+    }
+  } catch (error) {
+    console.error(error);
+
+  }
+};
+
 const handlePayNow = async () => {
   try {
     // Step 1: Retrieve the auth token first
@@ -253,7 +274,7 @@ const retrieveAuthToken = async () => {
                     OR
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '-1rem', marginBottom: '1.5rem' }}>
-                    <button style={buttonStyle}>Log into Tinder here, then click retrieve token ➡️</button>
+                    <button style={buttonStyle} onClick={handleTinderLogin}>Log into Tinder here, then click retrieve token ➡️</button>
                     <button style={buttonStyle} onClick={retrieveAuthToken}>
                         Retrieve Token
                     </button>
