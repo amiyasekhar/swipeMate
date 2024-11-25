@@ -6,6 +6,19 @@ import subprocess  # Add this import
 import json
 from dotenv import load_dotenv  # Import load_dotenv
 from monitor_requests import start_browser_with_debugging, monitor_chrome_requests
+import logging 
+import click
+log= logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
+def secho(text, file=None, nl=None, err=None, color=None, **styles):
+    pass
+
+def echo(text, file=None, nl=None, err=None, color=None, **styles):
+    pass
+
+click.echo = echo
+click.secho = secho
 
 app = Flask(__name__)
 CORS(app, origins=["https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"])
@@ -143,5 +156,5 @@ def webhook():
     return jsonify(success=True)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3002)))
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3002)), debug=False)
     #app.run(port=3002, host='0.0.0.0')
