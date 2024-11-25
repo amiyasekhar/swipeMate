@@ -30,8 +30,8 @@ if BASE_DIR:
     print("Loaded BASE_DIR")  # Debugging line
 
 
-@app.route('/create-checkout-session', methods=['POST'])
 @cross_origin(origins=["https://swipemate.ai", "http://localhost:3000", "http://127.0.0.1:3000"])
+@app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     data = json.loads(request.data)
     auth_token = data.get('authToken')
@@ -81,17 +81,15 @@ def tinder_login():
 @app.route('/retrieve-auth-token', methods=['GET'])
 def retrieve_auth_token():
     try:
-        # Call the monitor_chrome_requests function to start monitoring
         x_auth_token = monitor_chrome_requests()
-        
-        # Check if the token was successfully retrieved
         if x_auth_token:
             return jsonify({"token": x_auth_token}), 200
         else:
-            return jsonify({"error": "X-Auth-Token not found. Please ensure you are logged in to Tinder and try again."}), 404
+            return jsonify({"error": "Token not found. Ensure Tinder is open and requests are active."}), 404
     except Exception as e:
         print(f"Error in /retrieve-auth-token: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/webhook', methods=['POST'])
 def webhook():

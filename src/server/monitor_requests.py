@@ -12,39 +12,17 @@ from flask_cors import CORS
 # Disable proxies for local connections
 os.environ["NO_PROXY"] = "localhost,127.0.0.1"
 
-
-def get_browser_choice():
-    print("Select the browser you are using:")
-    print("1. Google Chrome")
-    print("2. Mozilla Firefox")
-    print("3. Safari")
-    choice = input("Enter the number of your choice: ")
-    if choice == '1':
-        return 'chrome'
-    elif choice == '2':
-        return 'firefox'
-    elif choice == '3':
-        return 'safari'
-    else:
-        print("Invalid choice.")
-        sys.exit(1)
-
 def start_browser_with_debugging(browser_name):
     if platform.system() == 'Darwin':  # macOS
         print("Mac OS detected")
         if browser_name == 'chrome':
-            cmd = ["open", "-a", "Google Chrome", "--args", "--remote-debugging-port=9222"]
+            cmd = [
+                "open", "-a", "Google Chrome", "--args",
+                "--remote-debugging-port=9222",
+                "https://tinder.com/"
+            ]
             subprocess.Popen(cmd)
-            print("Chrome started with remote debugging on port 9222.")
-        elif browser_name == 'firefox':
-            cmd = ["open", "-a", "Firefox", "--args", "-start-debugger-server", "6000"]
-            subprocess.Popen(cmd)
-            print("Firefox started with remote debugging on port 6000.")
-        elif browser_name == 'safari':
-            print("Starting Safari...")
-            print("Please enable 'Allow Remote Automation' in Safari's Develop menu.")
-            cmd = ["osascript", "-e", 'tell application "Safari" to activate']
-            subprocess.Popen(cmd)
+            print("Chrome started with remote debugging on port 9222 and navigated to Tinder.")
         else:
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
@@ -52,14 +30,13 @@ def start_browser_with_debugging(browser_name):
         print("Windows Detected")
         if browser_name == 'chrome':
             chrome_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-            cmd = [chrome_path, "--remote-debugging-port=9222"]
+            cmd = [
+                chrome_path,
+                "--remote-debugging-port=9222",
+                "https://tinder.com/"
+            ]
             subprocess.Popen(cmd)
-            print("Chrome started with remote debugging on port 9222.")
-        elif browser_name == 'firefox':
-            firefox_path = "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
-            cmd = [firefox_path, "-start-debugger-server", "6000"]
-            subprocess.Popen(cmd)
-            print("Firefox started with remote debugging on port 6000.")
+            print("Chrome started with remote debugging on port 9222 and navigated to Tinder.")
         else:
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
@@ -67,119 +44,111 @@ def start_browser_with_debugging(browser_name):
         print("Unsupported operating system.")
         sys.exit(1)
 
+
 def monitor_chrome_requests():
     import pychrome
     import threading
     import time
-    import sys
 
-    x_auth_token = None  # Initialize in the outer function scope
+    x_auth_token = None
 
-    # Connect to Chrome DevTools
     try:
+        # Connect to Chrome DevTools
         browser = pychrome.Browser(url="http://127.0.0.1:9222")
-
-        # Open an existing tab or create a new one
         tabs = browser.list_tab()
-        if not tabs:
-            print("No active tabs found. Please open a page in Chrome.")
-            sys.exit(1)
-        tab = tabs[0]
+        print("Tabs open: ", tabs)
 
-        # Event to track if the auth token has been found
+        tinder_tab = None
+        for tab in tabs:
+            # Start the tab before accessing methods
+            if not tab._started:
+                tab.start()
+            target_info = tab.call_method("Target.getTargetInfo")
+            url = target_info.get('targetInfo', {}).get('url', '')
+            print(f"Tab URL: {url}")
+            if 'tinder.com' in url:
+                tinder_tab = tab
+                break
+            # Stop the tab if it's not the one we're looking for
+            tab.stop()
+
+        if not tinder_tab:
+            print("Tinder.com is not open in any tab. Opening a new tab to navigate to Tinder.")
+            # Open a new tab and navigate to Tinder.com
+            tinder_tab = browser.new_tab()
+            tinder_tab.start()
+            load_event_fired = threading.Event()
+
+            def on_load_event_fired(**kwargs):
+                load_event_fired.set()
+
+            tinder_tab.Page.loadEventFired = on_load_event_fired
+            tinder_tab.Page.enable()
+            tinder_tab.Page.navigate(url="https://tinder.com/")
+            # Wait for the page to load or timeout after 10 seconds
+            load_event_fired.wait(10)
+        else:
+            if not tinder_tab._started:
+                tinder_tab.start()
+
+        # Start monitoring
+        tinder_tab.Network.enable()
+
         auth_token_found = threading.Event()
 
-        # Function to handle network requests
-        def log_request(request, **kwargs):
-            nonlocal x_auth_token  # Declare x_auth_token as nonlocal
+        def log_request(**kwargs):
+            nonlocal x_auth_token
             try:
-                if request['url'] == 'https://api.gotinder.com/v2/profile/consents?locale=en':
-                    print(f"Request to {request['url']} detected.")
+                request = kwargs.get('request', {})
+                # Log all requests
+                print(f"Request URL: {request.get('url', '')}")
+                # Check if the URL contains the target API endpoint
+                if "api.gotinder.com" in request.get('url', ''):
+                    print(f"Request detected for URL: {request['url']}")
+                    # Extract headers and log them
                     headers = request.get('headers', {})
+                    print(f"Request headers: {headers}")
+                    # Check for X-Auth-Token in headers
                     x_auth_token = headers.get('X-Auth-Token')
                     if x_auth_token:
                         print(f"X-Auth-Token found in request headers: {x_auth_token}")
                         auth_token_found.set()
-                        return
+                else:
+                    print("No X-Auth-Token found in request headers.")
             except Exception as e:
-                print(f"Exception in log_request: {e}")
+                print(f"Error in log_request: {e}")
 
-        # Function to handle network responses
-        def log_response(response, **kwargs):
-            nonlocal x_auth_token  # Declare x_auth_token as nonlocal
+        def log_response(**kwargs):
             try:
-                if response['url'] == 'https://api.gotinder.com/v2/profile/consents?locale=en':
-                    print(f"Response from {response['url']} detected.")
-                    if response['status'] == 200:
-                        print(f"Status code is 200 for {response['url']}.")
-                        headers = response.get('headers', {})
-                        x_auth_token = headers.get('X-Auth-Token')
-                        if x_auth_token:
-                            print(f"X-Auth-Token found in response headers: {x_auth_token}")
-                            auth_token_found.set()
+                response = kwargs.get('response', {})
+                if "api.gotinder.com" in response.get('url', ''):
+                    print(f"Response detected for {response['url']}")
             except Exception as e:
-                print(f"Exception in log_response: {e}")
+                print(f"Error in log_response: {e}")
 
-        # Attach event handlers
-        tab.Network.requestWillBeSent = log_request
-        tab.Network.responseReceived = log_response
+        # Register event handlers using set_listener
+        tinder_tab.set_listener("Network.requestWillBeSent", log_request)
+        tinder_tab.set_listener("Network.responseReceived", log_response)
 
-        # Start the tab and enable the Network domain
-        tab.start()
-        tab.Network.enable()
+        # Process events in a loop
+        timeout = 60  # seconds
+        start_time = time.time()
+        while not auth_token_found.is_set() and (time.time() - start_time) < timeout:
+            tinder_tab.wait(1)  # Wait and process events for 1 second
 
-        print("Monitoring network requests in Chrome. Interact with the page, and watch the logs.")
-        print("Press Ctrl+C to stop.")
+        if x_auth_token:
+            print(f"Returned Token: {x_auth_token}")
+        else:
+            print("Token not found within timeout period.")
 
-        # Start a thread to monitor the auth_token_found event
-        def wait_for_token():
-            try:
-                # Wait until the auth token is found or until interrupted
-                while not auth_token_found.is_set():
-                    time.sleep(0.5)
-            except KeyboardInterrupt:
-                print("Stopped by user.")
-
-        monitor_thread = threading.Thread(target=wait_for_token, daemon=True)
-        monitor_thread.start()
-
-        # Let the function return without stopping the tab or disabling the Network domain
-        return x_auth_token  # This will return None if the token hasn't been found yet
+        return x_auth_token
 
     except Exception as e:
-        print(f"Error connecting to Chrome DevTools: {e}")
-        sys.exit(1)
+        print("Exception occurred in monitor_chrome_requests:")
+        import traceback
+        traceback.print_exc()
+        return None
 
-    # If no token is found
-    return "X-Auth-Token not found. Reopen Chrome and try again"
-
-
-def monitor_firefox_requests():
-    print("Firefox debugging is not fully implemented in this script.")
-    print("Consider using an alternative method or tool to monitor network requests in Firefox.")
-    sys.exit(1)
-
-def monitor_safari_requests():
-    from selenium import webdriver
-
-    print("Ensure that 'Allow Remote Automation' is enabled in Safari's Develop menu.")
-
-    # Start Safari with safaridriver
-    options = webdriver.SafariOptions()
-    options.use_technology_preview = False  # Set to True if using Safari Technology Preview
-    driver = webdriver.Safari(options=options)
-
-    # Variable to track if the auth token has been found
-    auth_token_found = False
-
-    # Navigate to Tinder
-    driver.get("https://tinder.com/")
-
-    # Since Selenium does not provide network interception in Safari, we cannot directly monitor network requests
-    print("Monitoring network requests in Safari using Selenium is not supported.")
-    print("Consider using a proxy tool like mitmproxy to monitor network requests.")
-    driver.quit()
-    sys.exit(1)
 
 if __name__ == "__main__":
     # Automatically select Chrome for debugging
