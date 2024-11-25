@@ -6,13 +6,13 @@ export const images = {
   //   cancel: require("./images/perspective_matte-15-128x128.png")
   // },
   // userProfile: require("./images/7309681.jpg"),
-  cartoonAvatar: require("./images/cartoonAvatarCircular.png"),
+  // cartoonAvatar: require("./images/cartoonAvatarCircular.png"),
 
 
 
   // profilePicture: require("./images/roundedProfile.png"),
-  calendar: require("./images/calendar.png"),
+  // calendar: require("./images/calendar.png"),
 
-  blondeGirl: require("./images/girlImage.jpg"),
-  tiltedPhone: require("./images/iphoneSwipeMateRotated.png")
+  // blondeGirl: require("./images/girlImage.jpg"),
+  // tiltedPhone: require("./images/iphoneSwipeMateRotated.png")
 };

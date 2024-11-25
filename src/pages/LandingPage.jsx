@@ -1,6 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Import other necessary components or assets if needed
+import tinder1 from '../assets/images/Tinder 1.png';
+import tinder2 from '../assets/images/Tinder 2.png';
+import tinder3 from '../assets/images/Tinder 3.png';
 
 // Load your publishable key from Stripe
 import { loadStripe } from '@stripe/stripe-js';
@@ -208,7 +211,15 @@ const LandingPage = () => {
                 justifyContent: 'center',
               }}
             >
-              <p style={{ color: '#ccc' }}>Video Placeholder</p>
+              <img
+                src={tinder1}
+                style={{
+                  width: '100%', // Fixed width
+                  height: '100%', // Fixed height to make it square
+                  objectFit: 'contain', // Ensures the image fills the square without distortion
+                  borderRadius: '8px', // Optional: Keeps the rounded corners
+                }}
+              />
             </div>
           </div>
 
@@ -227,7 +238,15 @@ const LandingPage = () => {
                 justifyContent: 'center',
               }}
             >
-              <p style={{ color: '#ccc' }}>Video Placeholder</p>
+              <img
+                src={tinder2}
+                style={{
+                  width: '100%', // Fixed width
+                  height: '100%', // Fixed height to make it square
+                  objectFit: 'contain', // Ensures the image fills the square without distortion
+                  borderRadius: '8px', // Optional: Keeps the rounded corners
+                }}
+              />
             </div>
           </div>
 
@@ -244,7 +263,15 @@ const LandingPage = () => {
                 justifyContent: 'center',
               }}
             >
-              <p style={{ color: '#ccc' }}>Video Placeholder</p>
+              <img
+                src={tinder3}
+                style={{
+                  width: '100%', // Fixed width
+                  height: '150px', // Fixed height to make it square
+                  objectFit: 'contain', // Ensures the image fills the square without distortion
+                  borderRadius: '8px', // Optional: Keeps the rounded corners
+                }}
+              />
             </div>
           </div>
         </div>
