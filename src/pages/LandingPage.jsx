@@ -263,7 +263,7 @@ const LandingPage = () => {
         }}
       >
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>OR</p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '-1rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
           <button style={buttonStyle} onClick={handleTinderLogin}>
             Log into Tinder here, then click retrieve token ➡️
           </button>
@@ -271,6 +271,7 @@ const LandingPage = () => {
             Retrieve Token
           </button>
         </div>
+
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>
           Enter X-Auth-Token below, or auto retrieve token by clicking above ⬆️ (P.S. Leave the browser open after retrieval!)
         </p>
