@@ -27,3 +27,4 @@ gunicorn
 tensorflow==2.14.0
 keras==2.14.0
 numpy==1.24.3
+pychrome
