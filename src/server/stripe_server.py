@@ -5,9 +5,23 @@ import stripe
 import subprocess  # Add this import
 import json
 from dotenv import load_dotenv  # Import load_dotenv
+from monitor_requests import start_browser_with_debugging, monitor_chrome_requests
+import logging 
+import click
+log= logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
+def secho(text, file=None, nl=None, err=None, color=None, **styles):
+    pass
+
+def echo(text, file=None, nl=None, err=None, color=None, **styles):
+    pass
+
+click.echo = echo
+click.secho = secho
 
 app = Flask(__name__)
-CORS(app, origins=["https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"])
+CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000", "https://swipemate.ai"], methods=["GET", "POST", "OPTIONS"], supports_credentials=True)
 
 load_dotenv()
 stripe.api_key = os.getenv('STRIPE_API_KEY')
@@ -29,8 +43,8 @@ if BASE_DIR:
     print("Loaded BASE_DIR")  # Debugging line
 
 
+@cross_origin(origins=["https://swipemate.ai", "http://localhost:3000", "http://127.0.0.1:3000"])
 @app.route('/create-checkout-session', methods=['POST'])
-@cross_origin(origins='https://swipemate.ai')
 def create_checkout_session():
     data = json.loads(request.data)
     auth_token = data.get('authToken')
@@ -66,6 +80,29 @@ def create_checkout_session():
     except Exception as e:
         print(f"Error creating checkout session: {e}")
         return jsonify(error=str(e)), 500
+    
+@app.route('/tinder-login', methods=['GET'])
+def tinder_login():
+    try:
+        start_browser_with_debugging('chrome')  # Start Chrome with debugging
+        return jsonify({"message": "Chrome started in debugging mode"}), 200
+    except Exception as e:
+        print(f"Error in /tinder-login: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/retrieve-auth-token', methods=['GET'])
+def retrieve_auth_token():
+    try:
+        x_auth_token = monitor_chrome_requests()
+        if x_auth_token:
+            return jsonify({"token": x_auth_token}), 200
+        else:
+            return jsonify({"error": "Token not found. Ensure Tinder is open and requests are active."}), 404
+    except Exception as e:
+        print(f"Error in /retrieve-auth-token: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -134,5 +171,5 @@ def webhook():
     return jsonify(success=True)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3002)))
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3002)), debug=False)
     #app.run(port=3002, host='0.0.0.0')
