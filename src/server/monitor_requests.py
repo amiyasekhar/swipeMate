@@ -8,88 +8,143 @@ import threading
 import pychrome
 from flask import Flask, jsonify
 from flask_cors import CORS
+import shutil
 
 # Disable proxies for local connections
 os.environ["NO_PROXY"] = "localhost,127.0.0.1"
 
+def install_chrome_linux():
+    print("Installing Google Chrome on Linux...")
+    try:
+        subprocess.run(["sudo", "apt", "update"], check=True)
+        subprocess.run(["sudo", "apt", "install", "-y", "wget"], check=True)
+        subprocess.run(
+            ["wget", "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"],
+            check=True
+        )
+        subprocess.run(["sudo", "apt", "install", "-y", "./google-chrome-stable_current_amd64.deb"], check=True)
+        print("Google Chrome installed successfully on Linux.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install Google Chrome on Linux: {e}")
+        sys.exit(1)
+
+
+def install_chrome_macos():
+    print("Installing Google Chrome on macOS...")
+    try:
+        subprocess.run(["brew", "install", "--cask", "google-chrome"], check=True)
+        print("Google Chrome installed successfully on macOS.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install Google Chrome on macOS: {e}")
+        sys.exit(1)
+
+
+def install_chrome_windows():
+    print("Installing Google Chrome on Windows...")
+    try:
+        # Download Chrome installer
+        installer_url = "https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B014E2B74-3179-7E56-C5E6-1D0EB2E7D214%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DChrome%26needsadmin%3Dtrue/edgedl/chrome/install/GoogleChromeStandaloneEnterprise64.msi"
+        installer_path = os.path.join(os.getcwd(), "ChromeInstaller.msi")
+        subprocess.run(["powershell", "-Command", f"Invoke-WebRequest -Uri {installer_url} -OutFile {installer_path}"], check=True)
+        
+        # Run the installer
+        subprocess.run(["msiexec", "/i", installer_path, "/quiet", "/norestart"], check=True)
+        print("Google Chrome installed successfully on Windows.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install Google Chrome on Windows: {e}")
+        sys.exit(1)
+
+
+def find_chrome_binary():
+    """Search the system for a valid Chrome binary."""
+    print("Searching system for Google Chrome...")
+    common_paths = {
+        "Darwin": [  # macOS
+            "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        ],
+        "Linux": [  # Linux
+            "/usr/bin/google-chrome",
+            "/opt/google/chrome/chrome",
+            "/usr/bin/google-chrome-stable"
+        ],
+        "Windows": [  # Windows
+            "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+        ]
+    }
+
+    current_os = platform.system()
+    if current_os in common_paths:
+        for path in common_paths[current_os]:
+            if os.path.exists(path):
+                print(f"Found Chrome at {path}")
+                return path
+
+    # Perform additional searches if not found in common paths
+    print("Google Chrome not found in common paths. Performing system-wide search...")
+    if current_os == "Darwin":  # macOS
+        result = subprocess.run(["mdfind", "kMDItemCFBundleIdentifier == 'com.google.Chrome'"], stdout=subprocess.PIPE, text=True)
+        chrome_path = result.stdout.strip()
+        if chrome_path and os.path.exists(chrome_path):
+            print(f"Found Chrome at {chrome_path}")
+            return chrome_path
+    elif current_os == "Linux":  # Linux
+        result = subprocess.run(["which", "google-chrome"], stdout=subprocess.PIPE, text=True)
+        chrome_path = result.stdout.strip()
+        if chrome_path and os.path.exists(chrome_path):
+            print(f"Found Chrome at {chrome_path}")
+            return chrome_path
+    elif current_os == "Windows":  # Windows
+        for root in ["C:\\", "D:\\"]:
+            print(f"Searching {root} drive for Chrome...")
+            for dirpath, _, filenames in os.walk(root):
+                for filename in filenames:
+                    if filename.lower() == "chrome.exe":
+                        chrome_path = os.path.join(dirpath, filename)
+                        print(f"Found Chrome at {chrome_path}")
+                        return chrome_path
+
+    print("Google Chrome not found on this system.")
+    return None
+
+
 def start_browser_with_debugging(browser_name):
-    if platform.system() == 'Darwin':  # macOS
-        print("Mac OS detected")
-        if browser_name == 'chrome':
-            chrome_paths = [
-                "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-            ]
-            for chrome_path in chrome_paths:
-                try:
-                    cmd = [
-                        chrome_path,
-                        "--remote-debugging-port=9222",
-                        "https://tinder.com/"
-                    ]
-                    subprocess.Popen(cmd)
-                    print(f"Chrome started with remote debugging on port 9222 and navigated to Tinder using {chrome_path}.")
-                    break
-                except FileNotFoundError:
-                    print(f"Chrome not found at {chrome_path}. Trying next option...")
-            else:
-                print("No valid Chrome path found for macOS. Please install Google Chrome.")
-                sys.exit(1)
+    if browser_name != "chrome":
+        print(f"Unsupported browser: {browser_name}")
+        sys.exit(1)
+
+    print(f"Starting {browser_name} with debugging...")
+
+    chrome_path = find_chrome_binary()
+    if not chrome_path:
+        current_os = platform.system()
+        print(f"No Chrome installation found on {current_os}. Attempting to install...")
+        if current_os == "Linux":
+            install_chrome_linux()
+        elif current_os == "Darwin":
+            install_chrome_macos()
+        elif current_os == "Windows":
+            install_chrome_windows()
         else:
-            print(f"Unsupported browser: {browser_name}")
+            print(f"Unsupported operating system: {current_os}")
             sys.exit(1)
-    elif platform.system() == 'Windows':
-        print("Windows detected")
-        if browser_name == 'chrome':
-            chrome_paths = [
-                "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-                "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
-            ]
-            for chrome_path in chrome_paths:
-                try:
-                    cmd = [
-                        chrome_path,
-                        "--remote-debugging-port=9222",
-                        "https://tinder.com/"
-                    ]
-                    subprocess.Popen(cmd)
-                    print(f"Chrome started with remote debugging on port 9222 and navigated to Tinder using {chrome_path}.")
-                    break
-                except FileNotFoundError:
-                    print(f"Chrome not found at {chrome_path}. Trying next option...")
-            else:
-                print("No valid Chrome path found for Windows. Please install Google Chrome.")
-                sys.exit(1)
-        else:
-            print(f"Unsupported browser: {browser_name}")
+
+        # Retry finding Chrome after installation
+        chrome_path = find_chrome_binary()
+        if not chrome_path:
+            print(f"Failed to find or install Chrome on {current_os}.")
             sys.exit(1)
-    elif platform.system() == 'Linux':
-        print("Linux detected")
-        if browser_name == 'chrome':
-            chrome_paths = [
-                "/usr/bin/google-chrome",
-                "/opt/google/chrome/chrome",
-                "/usr/bin/google-chrome-stable"
-            ]
-            for chrome_path in chrome_paths:
-                try:
-                    cmd = [
-                        chrome_path,
-                        "--remote-debugging-port=9222",
-                        "https://tinder.com/"
-                    ]
-                    subprocess.Popen(cmd)
-                    print(f"Chrome started with remote debugging on port 9222 and navigated to Tinder using {chrome_path}.")
-                    break
-                except FileNotFoundError:
-                    print(f"Chrome not found at {chrome_path}. Trying next option...")
-            else:
-                print("No valid Chrome path found for Linux. Please install Google Chrome.")
-                sys.exit(1)
-        else:
-            print(f"Unsupported browser: {browser_name}")
-            sys.exit(1)
-    else:
-        print(f"Unsupported operating system: {platform.system()}")
+
+    try:
+        cmd = [
+            chrome_path,
+            "--remote-debugging-port=9222",
+            "https://tinder.com/"
+        ]
+        subprocess.Popen(cmd)
+        print(f"Chrome started with remote debugging on port 9222 and navigated to Tinder using {chrome_path}.")
+    except Exception as e:
+        print(f"Failed to start Chrome: {e}")
         sys.exit(1)
 
 
