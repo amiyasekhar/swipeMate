@@ -12,6 +12,10 @@ from flask_cors import CORS
 # Disable proxies for local connections
 os.environ["NO_PROXY"] = "localhost,127.0.0.1"
 
+import platform
+import subprocess
+import sys
+
 def start_browser_with_debugging(browser_name):
     if platform.system() == 'Darwin':  # macOS
         print("Mac OS detected")
@@ -27,9 +31,24 @@ def start_browser_with_debugging(browser_name):
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
     elif platform.system() == 'Windows':
-        print("Windows Detected")
+        print("Windows detected")
         if browser_name == 'chrome':
             chrome_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            cmd = [
+                chrome_path,
+                "--remote-debugging-port=9222",
+                "https://tinder.com/"
+            ]
+            subprocess.Popen(cmd)
+            print("Chrome started with remote debugging on port 9222 and navigated to Tinder.")
+        else:
+            print(f"Unsupported browser: {browser_name}")
+            sys.exit(1)
+    elif platform.system() == 'Linux':
+        print("Linux detected")
+        if browser_name == 'chrome':
+            # Path to Chrome on Linux (can vary; adjust if needed)
+            chrome_path = "/usr/bin/google-chrome"
             cmd = [
                 chrome_path,
                 "--remote-debugging-port=9222",
