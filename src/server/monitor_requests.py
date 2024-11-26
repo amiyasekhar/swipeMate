@@ -41,7 +41,7 @@ def start_browser_with_debugging(browser_name):
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
     else:
-        print("Unsupported operating system.")
+        print(f"Unsupported operating system: {platform.system()}")
         sys.exit(1)
 
 
