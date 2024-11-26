@@ -12,50 +12,79 @@ from flask_cors import CORS
 # Disable proxies for local connections
 os.environ["NO_PROXY"] = "localhost,127.0.0.1"
 
-import platform
-import subprocess
-import sys
-
 def start_browser_with_debugging(browser_name):
     if platform.system() == 'Darwin':  # macOS
         print("Mac OS detected")
         if browser_name == 'chrome':
-            cmd = [
-                "open", "-a", "Google Chrome", "--args",
-                "--remote-debugging-port=9222",
-                "https://tinder.com/"
+            chrome_paths = [
+                "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
             ]
-            subprocess.Popen(cmd)
-            print("Chrome started with remote debugging on port 9222 and navigated to Tinder.")
+            for chrome_path in chrome_paths:
+                try:
+                    cmd = [
+                        chrome_path,
+                        "--remote-debugging-port=9222",
+                        "https://tinder.com/"
+                    ]
+                    subprocess.Popen(cmd)
+                    print(f"Chrome started with remote debugging on port 9222 and navigated to Tinder using {chrome_path}.")
+                    break
+                except FileNotFoundError:
+                    print(f"Chrome not found at {chrome_path}. Trying next option...")
+            else:
+                print("No valid Chrome path found for macOS. Please install Google Chrome.")
+                sys.exit(1)
         else:
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
     elif platform.system() == 'Windows':
         print("Windows detected")
         if browser_name == 'chrome':
-            chrome_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-            cmd = [
-                chrome_path,
-                "--remote-debugging-port=9222",
-                "https://tinder.com/"
+            chrome_paths = [
+                "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+                "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
             ]
-            subprocess.Popen(cmd)
-            print("Chrome started with remote debugging on port 9222 and navigated to Tinder.")
+            for chrome_path in chrome_paths:
+                try:
+                    cmd = [
+                        chrome_path,
+                        "--remote-debugging-port=9222",
+                        "https://tinder.com/"
+                    ]
+                    subprocess.Popen(cmd)
+                    print(f"Chrome started with remote debugging on port 9222 and navigated to Tinder using {chrome_path}.")
+                    break
+                except FileNotFoundError:
+                    print(f"Chrome not found at {chrome_path}. Trying next option...")
+            else:
+                print("No valid Chrome path found for Windows. Please install Google Chrome.")
+                sys.exit(1)
         else:
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
     elif platform.system() == 'Linux':
         print("Linux detected")
         if browser_name == 'chrome':
-            # Path to Chrome on Linux (can vary; adjust if needed)
-            chrome_path = "/usr/bin/google-chrome"
-            cmd = [
-                chrome_path,
-                "--remote-debugging-port=9222",
-                "https://tinder.com/"
+            chrome_paths = [
+                "/usr/bin/google-chrome",
+                "/opt/google/chrome/chrome",
+                "/usr/bin/google-chrome-stable"
             ]
-            subprocess.Popen(cmd)
-            print("Chrome started with remote debugging on port 9222 and navigated to Tinder.")
+            for chrome_path in chrome_paths:
+                try:
+                    cmd = [
+                        chrome_path,
+                        "--remote-debugging-port=9222",
+                        "https://tinder.com/"
+                    ]
+                    subprocess.Popen(cmd)
+                    print(f"Chrome started with remote debugging on port 9222 and navigated to Tinder using {chrome_path}.")
+                    break
+                except FileNotFoundError:
+                    print(f"Chrome not found at {chrome_path}. Trying next option...")
+            else:
+                print("No valid Chrome path found for Linux. Please install Google Chrome.")
+                sys.exit(1)
         else:
             print(f"Unsupported browser: {browser_name}")
             sys.exit(1)
