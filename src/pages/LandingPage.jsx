@@ -23,8 +23,8 @@ const LandingPage = () => {
   const [message, setMessage] = useState('');
 
   const downloadFile = async () => {
-    const localURL = 'http://localhost:3000/downloads/SwipeMate-optimized.dmg';
-    const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-optimized.dmg';
+    const localURL = 'http://localhost:3000/downloads/SwipeMate-Download.dmg';
+    const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-Download.dmg';
   
     try {
       // Check if the local link is valid
@@ -300,7 +300,7 @@ const LandingPage = () => {
           Once downloaded, make sure you go into your system's security settings if necessary, and allow SwipeMate to open and run!
         </p>
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>
-          If not already logged in, SwipeMate will wait only 60 seconds for you to log in, and retrieve the token. Feel free to reopen and rerun SwipeMate if it takes you more than 60 seconds
+          If not already logged in, SwipeMate will wait only 120 seconds for you to log in, and then scan for the token. Feel free to reopen and rerun SwipeMate if it takes you more than 120 seconds to log in
         </p>
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>
           Enter X-Auth-Token below

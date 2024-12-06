@@ -32,6 +32,7 @@ swift-park-378200-ed8b6bc06acb.json
 /app/app_to_zip/
 /app/build/
 /app/dist/
+/app/.eggs/
 
 # files
 /app/chrome_controller.py
@@ -45,3 +46,4 @@ swift-park-378200-ed8b6bc06acb.json
 /app/requirements.txt
 /src/server/stripe_server.txt
 cleanup.py
+/app/instructions.txt

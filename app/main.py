@@ -85,7 +85,7 @@ class MainWindow(QMainWindow):
             # Step 2: Start Chrome with Debugging
             self.update_status("Starting Chrome and monitoring for token...")
             start_browser_with_debugging("chrome")
-            time.sleep(10)
+            time.sleep(120)
 
             # Step 3: Monitor Chrome for X-Auth-Token
             self.update_status("Monitoring Chrome for token...")
