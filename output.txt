@@ -1,0 +1,5 @@
+/Users/amiyasekhar/Downloads/swipeMate//app/requirements.txt:face_recognition_models==0.3.0
+/Users/amiyasekhar/Downloads/swipeMate//app/app_to_zip/requirements.txt:face_recognition_models==0.3.0
+/Users/amiyasekhar/Downloads/swipeMate//requirements.txt:face_recognition_models==0.3.0
+/Users/amiyasekhar/Downloads/swipeMate//cleanup.py:    # Starting package is hard-coded to 'face_recognition_models'
+/Users/amiyasekhar/Downloads/swipeMate//cleanup.py:    initial_package = "face_recognition_models"
