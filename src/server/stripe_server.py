@@ -43,7 +43,7 @@ if BASE_DIR:
     print("Loaded BASE_DIR")  # Debugging line
 
 
-@cross_origin(origins=["https://swipemate.ai", "http://localhost:3000", "http://127.0.0.1:3000"])
+@cross_origin(origins=["https://swipemate.ai", "http://localhost:3000", "http://127.0.0.1:3000", "http://127.0.0.1:9222"])
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     data = json.loads(request.data)

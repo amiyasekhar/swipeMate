@@ -22,24 +22,23 @@ const LandingPage = () => {
   // State to manage messages or errors
   const [message, setMessage] = useState('');
 
-  const handleTinderLogin = async () => {
+  const downloadFile = () => {
     try {
-      const response = await fetch(`${renderBackend}/tinder-login`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        // Inform the user to log into Tinder
-        alert('Chrome has started and navigated to Tinder.com. Please log in to your Tinder account in the opened browser.');
-      } else {
-        throw new Error('Error starting Chrome with debugging.');
+      // Try to download from the local development server
+      window.open('http://localhost:3000/downloads/SwipeMate-optimized.dmg', '_blank');
+      console.log('Downloading from local server...');
+    } catch (errorLocal) {
+      console.error('Error downloading from local:', errorLocal);
+      try {
+        // Fallback to hosted URL
+        window.open('https://swipemate.ai/downloads/SwipeMate-optimized.dmg', '_blank');
+        console.log('Downloading from hosted server...');
+      } catch (errorHosted) {
+        console.error('Error downloading from hosted:', errorHosted);
+        alert(
+          'Both local and hosted downloads failed. Please check your network connection or contact support.'
+        );
       }
-    } catch (error) {
-      console.error(error);
-      alert('An error occurred while starting Chrome. Please try again.');
     }
   };
 
@@ -75,30 +74,6 @@ const LandingPage = () => {
     } catch (error) {
       console.error('Error during handlePayNow: ', error);
       alert('An error occurred during payment. Please try again.');
-    }
-  };
-
-  const retrieveAuthToken = async () => {
-    try {
-      const response = await fetch(`${renderBackend}/retrieve-auth-token`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.token) {
-        setAuthToken(data.token); // Save the token
-        console.log('Received Auth Token');
-        setMessage('Token successfully retrieved! 🎉');
-      } else {
-        throw new Error(data.error || 'Failed to retrieve the auth token.');
-      }
-    } catch (error) {
-      console.error(error.message || error);
-      setMessage("Couldn't retrieve token. Try refreshing Tinder or logging in again.");
     }
   };
 
@@ -289,18 +264,18 @@ const LandingPage = () => {
           marginBottom: '6rem',
         }}
       >
-        <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>OR</p>
+        <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>OR, MAKE SURE YOU HAVE CHROME AND EITHER...</p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-          <button style={buttonStyle} onClick={handleTinderLogin}>
-            Log into Tinder here, then click retrieve token ➡️
+          <button style={buttonStyle} onClick={() => {console.log('Button clicked'); downloadFile();}}>
+            ➡️ DOWNLOAD SWIPEMATE ON MAC TO RETRIEVE TOKEN ⬅️
           </button>
-          <button style={buttonStyle} onClick={retrieveAuthToken}>
-            Retrieve Token
+          <button style={buttonStyle}>
+            ➡️ DOWNLOAD SWIPEMATE ON WINDOWS TO RETRIEVE TOKEN ⬅️
           </button>
         </div>
 
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>
-          Enter X-Auth-Token below, or auto retrieve token by clicking above ⬆️ (P.S. Leave the browser open after retrieval!)
+          Enter X-Auth-Token below
         </p>
         <input
           type="text"

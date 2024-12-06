@@ -28,3 +28,17 @@ swift-park-378200-ed8b6bc06acb.json
 
 # directories
 /src/tinder/Profiles/
+/src/tinder/classification/
+/app/app_to_zip/
+/app/build/
+/app/dist/
+
+# files
+/app/chrome_controller.py
+/app/find_chrome.py
+/app/install_chrome.py
+/app/monitor_chrome.py
+/app/MyApp.icns
+/app/run_chrome.py
+/app/setup.py
+/app/ui.py
