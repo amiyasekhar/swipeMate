@@ -1,5 +1,0 @@
-[build]
-  command = "bash prebuild.sh && pip install -r requirements.txt && npm run build"
-  publish = "dist"
-[build.environment]
-PYTHON_VERSION = "3.11"
