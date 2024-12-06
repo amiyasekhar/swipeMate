@@ -23,33 +23,24 @@ const LandingPage = () => {
   const [message, setMessage] = useState('');
 
   const downloadFile = () => {
-    window.open('http://localhost:3000/downloads/SwipeMate-optimized.dmg', '_blank');
-  };
-
-  /*const downloadFile = async () => {
     try {
-      console.log('Attempting to fetch the local file...');
-      const response = await fetch('http://localhost:3000/downloads/SwipeMate-optimized.dmg', {
-        method: 'HEAD',
-      });
-  
-      console.log('Fetch response:', response);
-  
-      if (response.ok) {
-        console.log('Local file found. Initiating download...');
-        window.open('http://localhost:3000/downloads/SwipeMate-optimized.dmg', '_blank');
-      } else {
-        console.error('Local file not found. Response status:', response.status, response.statusText);
-        throw new Error('Local file not found');
+      // Try to download from the local development server
+      window.open('http://localhost:3000/downloads/SwipeMate-optimized.dmg', '_blank');
+      console.log('Downloading from local server...');
+    } catch (errorLocal) {
+      console.error('Error downloading from local:', errorLocal);
+      try {
+        // Fallback to hosted URL
+        window.open('https://swipemate.ai/downloads/SwipeMate-optimized.dmg', '_blank');
+        console.log('Downloading from hosted server...');
+      } catch (errorHosted) {
+        console.error('Error downloading from hosted:', errorHosted);
+        alert(
+          'Both local and hosted downloads failed. Please check your network connection or contact support.'
+        );
       }
-    } catch (error) {
-      console.error('Error during local fetch attempt:', error.message || error);
-  
-      console.warn('Falling back to hosted file...');
-      console.log('Opening hosted URL: https://swipemate.ai/downloads/SwipeMate-optimized.dmg');
-      window.open('https://swipemate.ai/downloads/SwipeMate-optimized.dmg', '_blank');
     }
-  };*/
+  };
 
   const handlePayNow = async () => {
     try {
@@ -275,10 +266,10 @@ const LandingPage = () => {
       >
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>OR, MAKE SURE YOU HAVE CHROME AND EITHER...</p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-          <button style={buttonStyle}>
+          <button style={buttonStyle} onClick={() => {console.log('Button clicked'); downloadFile();}}>
             ➡️ DOWNLOAD SWIPEMATE ON MAC TO RETRIEVE TOKEN ⬅️
           </button>
-          <button style={buttonStyle} onClick={() => {console.log('Button clicked'); downloadFile();}}>
+          <button style={buttonStyle}>
             ➡️ DOWNLOAD SWIPEMATE ON WINDOWS TO RETRIEVE TOKEN ⬅️
           </button>
         </div>
