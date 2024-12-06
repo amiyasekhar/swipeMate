@@ -44,3 +44,4 @@ swift-park-378200-ed8b6bc06acb.json
 /app/ui.py
 /app/requirements.txt
 /src/server/stripe_server.txt
+cleanup.py
