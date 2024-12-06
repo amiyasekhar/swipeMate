@@ -297,7 +297,7 @@ const LandingPage = () => {
           You may need to allow popups and allow new windows to be opened when you click download
         </p>
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>
-          Once downloaded, make sure you go into your system's security if necessary, settings and allow SwipeMate to open and run!
+          Once downloaded, make sure you go into your system's security settings if necessary, and allow SwipeMate to open and run!
         </p>
         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>
           Enter X-Auth-Token below
