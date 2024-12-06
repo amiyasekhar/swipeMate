@@ -22,24 +22,44 @@ const LandingPage = () => {
   // State to manage messages or errors
   const [message, setMessage] = useState('');
 
-  const downloadFile = () => {
+  const downloadFile = async () => {
+    const localURL = 'http://localhost:3000/downloads/SwipeMate-optimized.dmg';
+    const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-optimized.dmg';
+  
     try {
-      // Try to download from the local development server
-      window.open('http://localhost:3000/downloads/SwipeMate-optimized.dmg', '_blank');
-      console.log('Downloading from local server...');
-    } catch (errorLocal) {
-      console.error('Error downloading from local:', errorLocal);
-      try {
-        // Fallback to hosted URL
-        window.open('https://swipemate.ai/downloads/SwipeMate-optimized.dmg', '_blank');
-        console.log('Downloading from hosted server...');
-      } catch (errorHosted) {
-        console.error('Error downloading from hosted:', errorHosted);
-        alert(
-          'Both local and hosted downloads failed. Please check your network connection or contact support.'
-        );
+      // Check if the local link is valid
+      const localResponse = await fetch(localURL, { method: 'HEAD' });
+      if (localResponse.ok) {
+        // Open the local link if valid
+        window.open(localURL, '_blank');
+        console.log('Downloading from local server...');
+        return;
+      } else {
+        console.warn('Local server not reachable, falling back to hosted URL.');
       }
+    } catch (errorLocal) {
+      console.error('Error checking local server:', errorLocal);
     }
+  
+    try {
+      // Check if the hosted link is valid
+      const hostedResponse = await fetch(hostedURL, { method: 'HEAD' });
+      if (hostedResponse.ok) {
+        // Open the hosted link if valid
+        window.open(hostedURL, '_blank');
+        console.log('Downloading from hosted server...');
+        return;
+      } else {
+        console.warn('Hosted server not reachable.');
+      }
+    } catch (errorHosted) {
+      console.error('Error checking hosted server:', errorHosted);
+    }
+  
+    // If both fail
+    alert(
+      'Both local and hosted downloads failed. Please check your network connection or contact support.'
+    );
   };
 
   const handlePayNow = async () => {
