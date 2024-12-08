@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import TestimonialsCarousel from '../components/TestimonialsCarousel.jsx';
 // Import other necessary components or assets if needed
 import tinder1 from '../assets/images/Tinder 1.png';
 import tinder2 from '../assets/images/Tinder 2.png';
@@ -7,7 +8,7 @@ import tinder3 from '../assets/images/Tinder 3.png';
 
 // Load your publishable key from Stripe
 import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe('YOUR_PUBLISHABLE_KEY_HERE');
+const stripePromise = loadStripe('pk_live_51QIlLMAnUfawcEVZyheb0Asq2W5Gn3k6OphgXIe4lmfgcyXgActd33ZIHi7pqdCvOtF57W5Huu7TEjHLnRkdiciH00vEurEtCg');
 
 const renderBackend = 'https://swipemate.onrender.com';
 
@@ -27,10 +28,8 @@ const LandingPage = () => {
     const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-Download.dmg';
   
     try {
-      // Check if the local link is valid
       const localResponse = await fetch(localURL, { method: 'HEAD' });
       if (localResponse.ok) {
-        // Open the local link if valid
         window.open(localURL, '_blank');
         console.log('Downloading from local server...');
         return;
@@ -42,10 +41,8 @@ const LandingPage = () => {
     }
   
     try {
-      // Check if the hosted link is valid
       const hostedResponse = await fetch(hostedURL, { method: 'HEAD' });
       if (hostedResponse.ok) {
-        // Open the hosted link if valid
         window.open(hostedURL, '_blank');
         console.log('Downloading from hosted server...');
         return;
@@ -56,7 +53,6 @@ const LandingPage = () => {
       console.error('Error checking hosted server:', errorHosted);
     }
   
-    // If both fail
     alert(
       'Both local and hosted downloads failed. Please check your network connection or contact support.'
     );
@@ -64,22 +60,20 @@ const LandingPage = () => {
 
   const handlePayNow = async () => {
     try {
-      // Ensure the auth token is set
       if (!authToken) {
         alert('Please retrieve or enter your X-Auth-Token before proceeding to payment.');
         return;
       }
 
-      // Proceed with payment logic
       const stripe = await stripePromise;
-
       console.log('The auth token: ', authToken);
+
       const response = await fetch(`${renderBackend}/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ authToken }), // Include auth token in the request
+        body: JSON.stringify({ authToken }),
       });
 
       if (!response.ok) {
@@ -89,7 +83,6 @@ const LandingPage = () => {
       const session = await response.json();
       console.log('session: ', session);
 
-      // Redirect to Stripe Checkout
       window.location.href = session.url;
     } catch (error) {
       console.error('Error during handlePayNow: ', error);
@@ -97,11 +90,10 @@ const LandingPage = () => {
     }
   };
 
-  // Scroll functions (optional, depending on your layout)
   const scrollToGetStarted = () => {
     if (getStartedSectionRef.current) {
       const elementPosition = getStartedSectionRef.current.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - 290; // Adjust as needed
+      const offsetPosition = elementPosition + window.scrollY - 290; 
       window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth',
@@ -112,7 +104,7 @@ const LandingPage = () => {
   const scrollToLearnMore = () => {
     if (learnMoreSectionRef.current) {
       const elementPosition = learnMoreSectionRef.current.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - 100; // Adjust as needed
+      const offsetPosition = elementPosition + window.scrollY - 100;
       window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth',
@@ -120,7 +112,6 @@ const LandingPage = () => {
     }
   };
 
-  // Common button styles
   const buttonStyle = {
     background: '#D44A7A',
     border: '6px solid #E02844',
@@ -139,17 +130,16 @@ const LandingPage = () => {
   };
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh' }}>
-      {/* Header Section */}
+    <div style={{ width: '100%', minHeight: '100vh', backgroundColor: '#fff' }}>
+      {/* Hero Section (Removed the height:100vh) */}
       <div
         style={{
-          height: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
           alignItems: 'center',
           textAlign: 'center',
           color: '#D44A7A',
+          padding: '4rem 1rem' // Added padding for better spacing
         }}
       >
         <h1
@@ -167,10 +157,10 @@ const LandingPage = () => {
         <div
           style={{
             maxWidth: '700px',
-            margin: '0 auto',        // This horizontally centers the container
-            textAlign: 'center',     // This centers the text inside the container
-            padding: '1rem',         // Optional: some padding for better readability
-            color: '#D44A7A'         // Keep your text color
+            margin: '0 auto',
+            textAlign: 'center',
+            padding: '1rem',
+            color: '#D44A7A'
           }}
         >
           <p style={{ fontSize: '1.125rem', marginBottom: '2rem' }}>
@@ -178,8 +168,6 @@ const LandingPage = () => {
           </p>
         </div>
 
-
-        {/* Buttons */}
         <div>
           <button style={buttonStyle} onClick={scrollToGetStarted}>
             Get Started
@@ -190,9 +178,11 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* Place the TestimonialsCarousel outside the hero section, so it's not cut off */}
+      <TestimonialsCarousel />
+
       {/* Instructions Section */}
       <div style={{ padding: '2rem', textAlign: 'center', color: '#D44A7A', marginBottom: '-5em' }}>
-        {/* Title above instructions */}
         <h2
           style={{
             fontSize: '1.5rem',
@@ -220,10 +210,10 @@ const LandingPage = () => {
               <img
                 src={tinder1}
                 style={{
-                  width: '100%', // Fixed width
-                  height: '100%', // Fixed height to make it square
-                  objectFit: 'contain', // Ensures the image fills the square without distortion
-                  borderRadius: '8px', // Optional: Keeps the rounded corners
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
                 }}
               />
             </div>
@@ -247,10 +237,10 @@ const LandingPage = () => {
               <img
                 src={tinder2}
                 style={{
-                  width: '100%', // Fixed width
-                  height: '100%', // Fixed height to make it square
-                  objectFit: 'contain', // Ensures the image fills the square without distortion
-                  borderRadius: '8px', // Optional: Keeps the rounded corners
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
                 }}
               />
             </div>
@@ -272,10 +262,10 @@ const LandingPage = () => {
               <img
                 src={tinder3}
                 style={{
-                  width: '100%', // Fixed width
-                  height: '150px', // Fixed height to make it square
-                  objectFit: 'contain', // Ensures the image fills the square without distortion
-                  borderRadius: '8px', // Optional: Keeps the rounded corners
+                  width: '100%',
+                  height: '150px',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
                 }}
               />
             </div>
@@ -283,7 +273,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Target Section */}
+      {/* Get Started Token Section */}
       <div
         ref={getStartedSectionRef}
         style={{

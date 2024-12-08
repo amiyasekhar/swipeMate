@@ -2,6 +2,7 @@ import React from 'react';
 import Slider from 'react-slick';
 
 // Import your 7 images (adjust the paths to match your actual file structure)
+// Ensure these image paths are correct.
 import img1 from '../assets/images/Test1.png';
 import img2 from '../assets/images/Test2.png';
 import img3 from '../assets/images/Test3.png';
@@ -10,8 +11,7 @@ import img5 from '../assets/images/Test5.png';
 import img6 from '../assets/images/Test6.png';
 import img7 from '../assets/images/Test7.png';
 
-// Updated testimonials array with text and corresponding names
-// Each testimonial now includes the testimonial text and an italicized name below
+// Testimonials data
 const testimonials = [
   {
     image: img1,
@@ -64,8 +64,13 @@ const TestimonialsCarousel = () => {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
-      <h2 style={{ textAlign: 'center', color: '#D44A7A', marginBottom: '1rem' }}>
+    <div style={{ 
+      maxWidth: '600px', 
+      margin: '4rem auto',  // Added ample margin for spacing
+      padding: '2rem', 
+      textAlign: 'center',
+    }}>
+      <h2 style={{ textAlign: 'center', color: '#D44A7A', marginBottom: '2rem' }}>
         What Our Users Say
       </h2>
       <Slider {...settings}>
