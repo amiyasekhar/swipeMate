@@ -164,9 +164,20 @@ const LandingPage = () => {
         <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>
           Go from simping to pimping!
         </p>
-        <p style={{ fontSize: '1.125rem', marginBottom: '2rem' }}>
-          SwipeMate is an AI that is trained to swipe right only on the most attractive women
-        </p>
+        <div
+          style={{
+            maxWidth: '700px',
+            margin: '0 auto',        // This horizontally centers the container
+            textAlign: 'center',     // This centers the text inside the container
+            padding: '1rem',         // Optional: some padding for better readability
+            color: '#D44A7A'         // Keep your text color
+          }}
+        >
+          <p style={{ fontSize: '1.125rem', marginBottom: '2rem' }}>
+            Tired of spending hours on dating apps? SwipeMate is an AI that is trained to swipe right only on the most attractive women. Think of an AI wingman that swipes right only on the most objectively attractive women.
+          </p>
+        </div>
+
 
         {/* Buttons */}
         <div>

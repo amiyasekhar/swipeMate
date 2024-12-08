@@ -33,6 +33,7 @@ swift-park-378200-ed8b6bc06acb.json
 /app/build/
 /app/dist/
 /app/.eggs/
+/GFBF/
 
 # files
 /app/chrome_controller.py

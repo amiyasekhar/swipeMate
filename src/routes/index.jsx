@@ -10,6 +10,8 @@ import ConnectAccountPage from "../pages/ConnectAccountPage";
 import InitialScreen from "../pages/InitialScreen";
 import TestPage from '../pages/TestPage'; // Adjust the path if necessary
 import CheckoutSuccess from "../pages/CheckoutSuccess";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 import { Login } from "@mui/icons-material";
 
