@@ -15,7 +15,7 @@ import img7 from '../assets/images/Test7.png';
 const testimonials = [
   {
     image: img1,
-    text: "Before SwipeMate, my matches always felt random. Now, I’m with someone who makes me feel cherished every single day. We’re creating moments I never imagined possible.",
+    text: "Before SwipeMate, I used to spend hours on Tinder instead of talking to girls in person. Now, I’m with someone who makes me feel cherished every single day, all thanks to auto swiping. We’re creating moments I never imagined possible.",
     name: "Ryan T."
   },
   {
@@ -25,17 +25,17 @@ const testimonials = [
   },
   {
     image: img3,
-    text: "From candlelit dinners to late-night city strolls, SwipeMate matched me with someone who shares my sense of adventure. We went from small talk to unforgettable nights out.",
+    text: "As a busy college athlete and hardworking student, I don't have time to socialise much or spend time on social on media. From candlelit dinners to late-night city strolls, SwipeMate matched me with someone who shares my sense of adventure. SwipeMate put my social and love life on autopilot",
     name: "Ethan L."
   },
   {
     image: img4,
-    text: "SwipeMate isn’t just about romance—it introduced me to a whole new social circle! I’ve gained amazing friends who turn ordinary weekends into epic stories.",
+    text: "SwipeMate isn’t just about romance—it introduced me to a whole new social circle of girls, without having to lift a finger! I’ve gained amazing girl friends who turn ordinary weekends into epic stories ;)",
     name: "Alex R."
   },
   {
     image: img5,
-    text: "I never expected a dating app to broaden my world this much. SwipeMate brought me people who lift my spirits and show me that life’s best moments are shared.",
+    text: "I bring a girl home almost everyday from Tinder, without having to manually swipe. SwipeMate is a gamechanger",
     name: "Sam K."
   },
   {
