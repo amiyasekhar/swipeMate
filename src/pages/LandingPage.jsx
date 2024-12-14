@@ -1,27 +1,58 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TestimonialsCarousel from '../components/TestimonialsCarousel.jsx';
-// Import other necessary components or assets if needed
 import tinder1 from '../assets/images/Tinder 1.png';
 import tinder2 from '../assets/images/Tinder 2.png';
 import tinder3 from '../assets/images/Tinder 3.png';
-
-// Load your publishable key from Stripe
 import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe('pk_live_51QIlLMAnUfawcEVZyheb0Asq2W5Gn3k6OphgXIe4lmfgcyXgActd33ZIHi7pqdCvOtF57W5Huu7TEjHLnRkdiciH00vEurEtCg');
+import './LandingPage.css'; // <-- Import your CSS file
 
+const stripePromise = loadStripe('pk_live_51QIlLMAnUfawcEVZyheb0Asq2W5Gn3k6OphgXIe4lmfgcyXgActd33ZIHi7pqdCvOtF57W5Huu7TEjHLnRkdiciH00vEurEtCg');
 const renderBackend = 'https://swipemate.onrender.com';
 
 const LandingPage = () => {
-  // References to sections
   const getStartedSectionRef = useRef(null);
   const learnMoreSectionRef = useRef(null);
-
+  
   const [authToken, setAuthToken] = useState('');
   const navigate = useNavigate();
-
-  // State to manage messages or errors
   const [message, setMessage] = useState('');
+
+  // This ref will hold all sections that need to fade in
+  const fadeSectionRefs = useRef([]);
+
+  // A callback ref to add each fade section to our array
+  const addFadeSectionRef = useCallback((el) => {
+    if (el && !fadeSectionRefs.current.includes(el)) {
+      fadeSectionRefs.current.push(el);
+    }
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Element has come into view. Add the fade-in class.
+          entry.target.classList.add('fade-in');
+        } else {
+          // Element has left the viewport. Remove the fade-in class.
+          entry.target.classList.remove('fade-in');
+        }
+      });
+    }, { threshold: 0.1 });
+  
+    fadeSectionRefs.current.forEach((section) => {
+      if (section) observer.observe(section);
+    });
+  
+    return () => {
+      if (fadeSectionRefs.current) {
+        fadeSectionRefs.current.forEach((section) => {
+          if (section) observer.unobserve(section);
+        });
+      }
+    };
+  }, [fadeSectionRefs]);
 
   const downloadFile = async () => {
     const localURL = 'http://localhost:3000/downloads/SwipeMate-Download.dmg';
@@ -130,16 +161,18 @@ const LandingPage = () => {
   };
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh', backgroundColor: '#fff' }}>
-      {/* Hero Section (Removed the height:100vh) */}
+    <div style={{ width: '100%', minHeight: '100vh', background: 'linear-gradient(to right, #ffffff, #e695b1)' }}>
+      {/* Hero Section */}
       <div
+        className="fade-section"
+        ref={addFadeSectionRef}
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
           color: '#D44A7A',
-          padding: '4rem 1rem' // Added padding for better spacing
+          padding: '4rem 1rem'
         }}
       >
         <h1
@@ -178,11 +211,17 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Place the TestimonialsCarousel outside the hero section, so it's not cut off */}
-      <TestimonialsCarousel />
+      {/* Testimonials Section */}
+      <div className="fade-section" ref={addFadeSectionRef}>
+        <TestimonialsCarousel />
+      </div>
 
       {/* Instructions Section */}
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#D44A7A', marginBottom: '-5em' }}>
+      <div 
+        className="fade-section"
+        ref={addFadeSectionRef}
+        style={{ padding: '2rem', textAlign: 'center', color: '#D44A7A', marginBottom: '-5em' }}
+      >
         <h2
           style={{
             fontSize: '1.5rem',
@@ -276,9 +315,11 @@ const LandingPage = () => {
       {/* Get Started Token Section */}
       <div
         ref={getStartedSectionRef}
+        className="fade-section"
+        ref={addFadeSectionRef}
         style={{
           padding: '2rem',
-          backgroundColor: '#fff',
+          background: 'linear-gradient(to right, #ffffff, #e695b1)',
           borderRadius: '8px',
           textAlign: 'center',
           color: '#D44A7A',
@@ -364,13 +405,15 @@ const LandingPage = () => {
       {/* Learn More Section */}
       <div
         ref={learnMoreSectionRef}
+        className="fade-section"
+        ref={addFadeSectionRef}
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '2rem',
-          backgroundColor: '#fff',
+          background: 'linear-gradient(to right, #ffffff, #e695b1)',
           color: '#D44A7A',
           textAlign: 'center',
         }}
@@ -414,6 +457,18 @@ const LandingPage = () => {
         </ul>
         <p style={{ marginTop: '1.5rem', fontSize: '1.125rem' }}>Stay tuned for more... 😊</p>
       </div>
+      
+      {/* Footer */}
+      <footer 
+        style={{
+          textAlign: 'center',
+          padding: '1rem',
+          color: '#D44A7A',
+          fontSize: '0.875rem'
+        }}
+      >
+        © SwipeMate AI 2024
+      </footer>
     </div>
   );
 };
