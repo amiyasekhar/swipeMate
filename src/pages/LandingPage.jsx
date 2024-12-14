@@ -160,6 +160,32 @@ const LandingPage = () => {
     marginBottom: '1rem',
   };
 
+  // FAQ State
+  const [openFAQ, setOpenFAQ] = useState(null);
+  
+  const faqs = [
+    {
+      question: "I don't feel comfortable downloading an app from a random site",
+      answer: "It's ok! You don't need to. You can always use the chrome extension to retrieve the auth token, or use inspect element."
+    },
+    {
+      question: "Is my data safe?",
+      answer: "Safer than all birth control methods out there ;) We're kidding, but seriously, your auth token only enables us to literally only swipe right and left on tinder. You won't need to worry about safety, worry about not having more fun with whomever you meet ;)"
+    },
+    {
+      question: "How many swipes do you guarantee me?",
+      answer: "Our AI will swipe right on attractive girls either 500 times for each purchase, or until tinder restricts swiping (in the case of having a basic unpaid tinder account). We don't guarantee you matches...yet ;)"
+    },
+    {
+      question: "Will I get matches?",
+      answer: "Our AI can only swipe for you...for now until we make it more robust. The matches you get depends on the quality of your profile."
+    }
+  ];
+
+  const toggleFAQ = (index) => {
+    setOpenFAQ(openFAQ === index ? null : index);
+  };
+
   return (
     <div style={{ width: '100%', minHeight: '100vh', background: 'linear-gradient(to right, #ffffff, #e695b1)' }}>
       {/* Hero Section */}
@@ -458,8 +484,44 @@ const LandingPage = () => {
         <p style={{ marginTop: '1.5rem', fontSize: '1.125rem' }}>Stay tuned for more... 😊</p>
       </div>
       
+      {/* FAQ Section */}
+      <div 
+        className="fade-section" 
+        ref={addFadeSectionRef}
+        style={{
+          padding: '2rem',
+          background: '#fff', // Changed to white
+          color: '#D44A7A',
+          maxWidth: '800px',
+          margin: '2rem auto',
+          borderRadius: '8px'
+        }}
+      >
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', textAlign: 'center' }}>FAQ</h2>
+        {faqs.map((faq, index) => (
+          <div key={index} style={{ marginBottom: '1rem', borderBottom: '1px solid #D44A7A', paddingBottom: '1rem' }}>
+            <div 
+              onClick={() => toggleFAQ(index)} 
+              style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+            >
+              <span style={{ fontSize: '1.125rem' }}>{faq.question}</span>
+              <span style={{ fontSize: '1.5rem', transform: openFAQ === index ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
+                ▼
+              </span>
+            </div>
+            {openFAQ === index && (
+              <p style={{ marginTop: '0.5rem', fontSize: '1rem' }}>
+                {faq.answer}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+      
       {/* Footer */}
       <footer 
+        className="fade-section" 
+        ref={addFadeSectionRef}
         style={{
           textAlign: 'center',
           padding: '1rem',
