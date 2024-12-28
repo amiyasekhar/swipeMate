@@ -1,105 +1,125 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TestimonialsCarousel from '../components/TestimonialsCarousel.jsx';
-// Import other necessary components or assets if needed
 import tinder1 from '../assets/images/Tinder 1.png';
 import tinder2 from '../assets/images/Tinder 2.png';
 import tinder3 from '../assets/images/Tinder 3.png';
-
-// Load your publishable key from Stripe
 import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe('pk_live_51QIlLMAnUfawcEVZyheb0Asq2W5Gn3k6OphgXIe4lmfgcyXgActd33ZIHi7pqdCvOtF57W5Huu7TEjHLnRkdiciH00vEurEtCg');
+import './LandingPage.css'; // <-- Import your CSS file
 
+const stripePromise = loadStripe('pk_live_51QIlLMAnUfawcEVZyheb0Asq2W5Gn3k6OphgXIe4lmfgcyXgActd33ZIHi7pqdCvOtF57W5Huu7TEjHLnRkdiciH00vEurEtCg');
 const renderBackend = 'https://swipemate.onrender.com';
 
 const LandingPage = () => {
-  // References to sections
   const getStartedSectionRef = useRef(null);
   const learnMoreSectionRef = useRef(null);
-
+  
   const [authToken, setAuthToken] = useState('');
   const navigate = useNavigate();
-
-  // State to manage messages or errors
   const [message, setMessage] = useState('');
 
-const downloadFile = async () => {
-  const localURL = 'http://localhost:3000/downloads/SwipeMate-Download.dmg';
-  const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-Download.dmg';
+  // This ref will hold all sections that need to fade in
+  const fadeSectionRefs = useRef([]);
 
-  try {
-    const localResponse = await fetch(localURL, { method: 'HEAD' });
-    if (localResponse.ok) {
-      chrome.downloads.download({
-        url: localURL,
-        filename: 'SwipeMate-Download.dmg',
-        saveAs: true
+  // A callback ref to add each fade section to our array
+  const addFadeSectionRef = useCallback((el) => {
+    if (el && !fadeSectionRefs.current.includes(el)) {
+      fadeSectionRefs.current.push(el);
+    }
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Element has come into view. Add the fade-in class.
+          entry.target.classList.add('fade-in');
+        } else {
+          // Element has left the viewport. Remove the fade-in class.
+          entry.target.classList.remove('fade-in');
+        }
       });
-      console.log('Downloading from local server...');
-      return;
-    } else {
-      console.warn('Local server not reachable, falling back to hosted URL.');
-    }
-  } catch (errorLocal) {
-    console.error('Error checking local server:', errorLocal);
-  }
-
-  try {
-    const hostedResponse = await fetch(hostedURL, { method: 'HEAD' });
-    if (hostedResponse.ok) {
-      chrome.downloads.download({
-        url: hostedURL,
-        filename: 'SwipeMate-Download.dmg',
-        saveAs: true
-      });
-      console.log('Downloading from hosted server...');
-      return;
-    } else {
-      console.warn('Hosted server not reachable.');
-    }
-  } catch (errorHosted) {
-    console.error('Error checking hosted server:', errorHosted);
-  }
-
-  alert(
-    'Both local and hosted downloads failed. Please check your network connection or contact support.'
-  );
-};
-
-
-const handlePayNow = async () => {
-  try {
-    if (!authToken) {
-      alert('Please retrieve or enter your X-Auth-Token before proceeding to payment.');
-      return;
-    }
-
-    const stripe = await stripePromise;
-    console.log('The auth token: ', authToken);
-
-    const response = await fetch(`${renderBackend}/create-checkout-session`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ authToken }),
+    }, { threshold: 0.1 });
+  
+    fadeSectionRefs.current.forEach((section) => {
+      if (section) observer.observe(section);
     });
+  
+    return () => {
+      if (fadeSectionRefs.current) {
+        fadeSectionRefs.current.forEach((section) => {
+          if (section) observer.unobserve(section);
+        });
+      }
+    };
+  }, [fadeSectionRefs]);
 
-    if (!response.ok) {
-      throw new Error('Failed to create checkout session');
+  const downloadFile = async () => {
+    const localURL = 'http://localhost:3000/downloads/SwipeMate-Download.dmg';
+    const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-Download.dmg';
+  
+    try {
+      const localResponse = await fetch(localURL, { method: 'HEAD' });
+      if (localResponse.ok) {
+        window.open(localURL, '_blank');
+        console.log('Downloading from local server...');
+        return;
+      } else {
+        console.warn('Local server not reachable, falling back to hosted URL.');
+      }
+    } catch (errorLocal) {
+      console.error('Error checking local server:', errorLocal);
     }
+  
+    try {
+      const hostedResponse = await fetch(hostedURL, { method: 'HEAD' });
+      if (hostedResponse.ok) {
+        window.open(hostedURL, '_blank');
+        console.log('Downloading from hosted server...');
+        return;
+      } else {
+        console.warn('Hosted server not reachable.');
+      }
+    } catch (errorHosted) {
+      console.error('Error checking hosted server:', errorHosted);
+    }
+  
+    alert(
+      'Both local and hosted downloads failed. Please check your network connection or contact support.'
+    );
+  };
 
-    const session = await response.json();
-    console.log('session: ', session);
+  const handlePayNow = async () => {
+    try {
+      if (!authToken) {
+        alert('Please retrieve or enter your X-Auth-Token before proceeding to payment.');
+        return;
+      }
 
-    // Open the checkout URL in a new tab
-    chrome.tabs.create({ url: session.url });
-  } catch (error) {
-    console.error('Error during handlePayNow: ', error);
-    alert('An error occurred during payment. Please try again.');
-  }
-};
+      const stripe = await stripePromise;
+      console.log('The auth token: ', authToken);
 
+      const response = await fetch(`${renderBackend}/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ authToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const session = await response.json();
+      console.log('session: ', session);
+
+      window.location.href = session.url;
+    } catch (error) {
+      console.error('Error during handlePayNow: ', error);
+      alert('An error occurred during payment. Please try again.');
+    }
+  };
 
   const scrollToGetStarted = () => {
     if (getStartedSectionRef.current) {
@@ -140,17 +160,45 @@ const handlePayNow = async () => {
     marginBottom: '1rem',
   };
 
+  // FAQ State
+  const [openFAQ, setOpenFAQ] = useState(null);
+  
+  const faqs = [
+    {
+      question: "I don't feel comfortable downloading an app from a random site",
+      answer: "It's ok! You don't need to. You can always use the chrome extension to retrieve the auth token, or use inspect element."
+    },
+    {
+      question: "Is my data safe?",
+      answer: "Safer than all birth control methods out there ;) We're kidding, but seriously, your auth token only enables us to literally only swipe right and left on tinder. You won't need to worry about safety, worry about not having more fun with whomever you meet ;)"
+    },
+    {
+      question: "How many swipes do you guarantee me?",
+      answer: "Our AI will swipe right on attractive girls either 500 times for each purchase, or until tinder restricts swiping (in the case of having a basic unpaid tinder account). We don't guarantee you matches...yet ;)"
+    },
+    {
+      question: "Will I get matches?",
+      answer: "Our AI can only swipe for you...for now until we make it more robust. The matches you get depends on the quality of your profile."
+    }
+  ];
+
+  const toggleFAQ = (index) => {
+    setOpenFAQ(openFAQ === index ? null : index);
+  };
+
   return (
-    <div style={{ width: '100%', minHeight: '100vh', backgroundColor: '#fff' }}>
-      {/* Hero Section (Removed the height:100vh) */}
+    <div style={{ width: '100%', minHeight: '100vh', background: 'linear-gradient(to right, #ffffff, #e695b1)' }}>
+      {/* Hero Section */}
       <div
+        className="fade-section"
+        ref={addFadeSectionRef}
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
           color: '#D44A7A',
-          padding: '4rem 1rem' // Added padding for better spacing
+          padding: '4rem 1rem'
         }}
       >
         <h1
@@ -189,11 +237,17 @@ const handlePayNow = async () => {
         </div>
       </div>
 
-      {/* Place the TestimonialsCarousel outside the hero section, so it's not cut off */}
-      <TestimonialsCarousel />
+      {/* Testimonials Section */}
+      <div className="fade-section" ref={addFadeSectionRef}>
+        <TestimonialsCarousel />
+      </div>
 
       {/* Instructions Section */}
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#D44A7A', marginBottom: '-5em' }}>
+      <div 
+        className="fade-section"
+        ref={addFadeSectionRef}
+        style={{ padding: '2rem', textAlign: 'center', color: '#D44A7A', marginBottom: '-5em' }}
+      >
         <h2
           style={{
             fontSize: '1.5rem',
@@ -287,9 +341,11 @@ const handlePayNow = async () => {
       {/* Get Started Token Section */}
       <div
         ref={getStartedSectionRef}
+        className="fade-section"
+        ref={addFadeSectionRef}
         style={{
           padding: '2rem',
-          backgroundColor: '#fff',
+          background: 'linear-gradient(to right, #ffffff, #e695b1)',
           borderRadius: '8px',
           textAlign: 'center',
           color: '#D44A7A',
@@ -375,13 +431,15 @@ const handlePayNow = async () => {
       {/* Learn More Section */}
       <div
         ref={learnMoreSectionRef}
+        className="fade-section"
+        ref={addFadeSectionRef}
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '2rem',
-          backgroundColor: '#fff',
+          background: 'linear-gradient(to right, #ffffff, #e695b1)',
           color: '#D44A7A',
           textAlign: 'center',
         }}
@@ -425,6 +483,54 @@ const handlePayNow = async () => {
         </ul>
         <p style={{ marginTop: '1.5rem', fontSize: '1.125rem' }}>Stay tuned for more... 😊</p>
       </div>
+      
+      {/* FAQ Section */}
+      <div 
+        className="fade-section" 
+        ref={addFadeSectionRef}
+        style={{
+          padding: '2rem',
+          background: '#fff', // Changed to white
+          color: '#D44A7A',
+          maxWidth: '800px',
+          margin: '2rem auto',
+          borderRadius: '8px'
+        }}
+      >
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', textAlign: 'center' }}>FAQ</h2>
+        {faqs.map((faq, index) => (
+          <div key={index} style={{ marginBottom: '1rem', borderBottom: '1px solid #D44A7A', paddingBottom: '1rem' }}>
+            <div 
+              onClick={() => toggleFAQ(index)} 
+              style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+            >
+              <span style={{ fontSize: '1.125rem' }}>{faq.question}</span>
+              <span style={{ fontSize: '1.5rem', transform: openFAQ === index ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
+                ▼
+              </span>
+            </div>
+            {openFAQ === index && (
+              <p style={{ marginTop: '0.5rem', fontSize: '1rem' }}>
+                {faq.answer}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      {/* Footer */}
+      <footer 
+        className="fade-section" 
+        ref={addFadeSectionRef}
+        style={{
+          textAlign: 'center',
+          padding: '1rem',
+          color: '#D44A7A',
+          fontSize: '0.875rem'
+        }}
+      >
+        © SwipeMate AI 2024
+      </footer>
     </div>
   );
 };
