@@ -12,13 +12,11 @@
     "webRequest",
     "webRequestBlocking"
   ],
-  "host_permissions": [
-    "https://tinder.com/*",
-    "https://api.gotinder.com/*",
-    "http://*/*",
-    "https://*/*"
-
-  ],
+"host_permissions": [
+  "https://tinder.com/*",
+  "https://api.gotinder.com/*",
+  "https://swipemate.onrender.com/*"
+],
   "background": {
     "service_worker": "src/background.js"
   },
