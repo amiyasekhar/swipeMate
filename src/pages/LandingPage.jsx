@@ -23,72 +23,83 @@ const LandingPage = () => {
   // State to manage messages or errors
   const [message, setMessage] = useState('');
 
-  const downloadFile = async () => {
-    const localURL = 'http://localhost:3000/downloads/SwipeMate-Download.dmg';
-    const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-Download.dmg';
-  
-    try {
-      const localResponse = await fetch(localURL, { method: 'HEAD' });
-      if (localResponse.ok) {
-        window.open(localURL, '_blank');
-        console.log('Downloading from local server...');
-        return;
-      } else {
-        console.warn('Local server not reachable, falling back to hosted URL.');
-      }
-    } catch (errorLocal) {
-      console.error('Error checking local server:', errorLocal);
-    }
-  
-    try {
-      const hostedResponse = await fetch(hostedURL, { method: 'HEAD' });
-      if (hostedResponse.ok) {
-        window.open(hostedURL, '_blank');
-        console.log('Downloading from hosted server...');
-        return;
-      } else {
-        console.warn('Hosted server not reachable.');
-      }
-    } catch (errorHosted) {
-      console.error('Error checking hosted server:', errorHosted);
-    }
-  
-    alert(
-      'Both local and hosted downloads failed. Please check your network connection or contact support.'
-    );
-  };
+const downloadFile = async () => {
+  const localURL = 'http://localhost:3000/downloads/SwipeMate-Download.dmg';
+  const hostedURL = 'https://swipemate.ai/downloads/SwipeMate-Download.dmg';
 
-  const handlePayNow = async () => {
-    try {
-      if (!authToken) {
-        alert('Please retrieve or enter your X-Auth-Token before proceeding to payment.');
-        return;
-      }
-
-      const stripe = await stripePromise;
-      console.log('The auth token: ', authToken);
-
-      const response = await fetch(`${renderBackend}/create-checkout-session`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ authToken }),
+  try {
+    const localResponse = await fetch(localURL, { method: 'HEAD' });
+    if (localResponse.ok) {
+      chrome.downloads.download({
+        url: localURL,
+        filename: 'SwipeMate-Download.dmg',
+        saveAs: true
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-
-      const session = await response.json();
-      console.log('session: ', session);
-
-      window.location.href = session.url;
-    } catch (error) {
-      console.error('Error during handlePayNow: ', error);
-      alert('An error occurred during payment. Please try again.');
+      console.log('Downloading from local server...');
+      return;
+    } else {
+      console.warn('Local server not reachable, falling back to hosted URL.');
     }
-  };
+  } catch (errorLocal) {
+    console.error('Error checking local server:', errorLocal);
+  }
+
+  try {
+    const hostedResponse = await fetch(hostedURL, { method: 'HEAD' });
+    if (hostedResponse.ok) {
+      chrome.downloads.download({
+        url: hostedURL,
+        filename: 'SwipeMate-Download.dmg',
+        saveAs: true
+      });
+      console.log('Downloading from hosted server...');
+      return;
+    } else {
+      console.warn('Hosted server not reachable.');
+    }
+  } catch (errorHosted) {
+    console.error('Error checking hosted server:', errorHosted);
+  }
+
+  alert(
+    'Both local and hosted downloads failed. Please check your network connection or contact support.'
+  );
+};
+
+
+const handlePayNow = async () => {
+  try {
+    if (!authToken) {
+      alert('Please retrieve or enter your X-Auth-Token before proceeding to payment.');
+      return;
+    }
+
+    const stripe = await stripePromise;
+    console.log('The auth token: ', authToken);
+
+    const response = await fetch(`${renderBackend}/create-checkout-session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ authToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create checkout session');
+    }
+
+    const session = await response.json();
+    console.log('session: ', session);
+
+    // Open the checkout URL in a new tab
+    chrome.tabs.create({ url: session.url });
+  } catch (error) {
+    console.error('Error during handlePayNow: ', error);
+    alert('An error occurred during payment. Please try again.');
+  }
+};
+
 
   const scrollToGetStarted = () => {
     if (getStartedSectionRef.current) {

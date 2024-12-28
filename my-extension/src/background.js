@@ -40,9 +40,6 @@ function monitorNetworkRequests() {
           tinderToken = header.value;
           console.log("Captured X-Auth-Token:", tinderToken);
 
-          // Display token to the user
-          //alert("Tinder Auth Token: " + tinderToken);
-
           // Save token to local storage for persistence
           chrome.storage.local.set({ tinderAuthToken: tinderToken }, () => {
             console.log("Auth token saved to local storage.");
@@ -61,6 +58,18 @@ function monitorNetworkRequests() {
   );
 }
 
+// Function to check if the auth token exists
+function getAuthToken(callback) {
+  chrome.storage.local.get("tinderAuthToken", (result) => {
+    if (result.tinderAuthToken) {
+      tinderToken = result.tinderAuthToken; // Update in-memory token
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+}
+
 // Run when the extension is installed or updated
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Extension installed. Searching for Tinder...");
@@ -71,6 +80,16 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.action.onClicked.addListener(() => {
   console.log("Extension clicked. Checking for Tinder tab...");
   checkTinderTab();
+});
+
+// Handle messages from popup.js
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "checkAuthToken") {
+    getAuthToken((authTokenFound) => {
+      sendResponse({ authTokenFound });
+    });
+    return true; // Indicate asynchronous response
+  }
 });
 
 // Debug: Log when the extension starts running
