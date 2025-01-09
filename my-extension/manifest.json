@@ -8,9 +8,7 @@
     "tabs",
     "activeTab",
     "storage",
-    "downloads",
-    "webRequest",
-    "webRequestBlocking"
+    "webRequest"
   ],
 "host_permissions": [
   "https://tinder.com/*",
