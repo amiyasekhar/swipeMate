@@ -5,7 +5,7 @@ import tinder1 from '../assets/images/Tinder 1.png';
 import tinder2 from '../assets/images/Tinder 2.png';
 import tinder3 from '../assets/images/Tinder 3.png';
 import { loadStripe } from '@stripe/stripe-js';
-import './LandingPage.css'; // <-- Import your CSS file
+//import './LandingPage.css'; // <-- Import your CSS file
 
 const stripePromise = loadStripe('pk_live_51QIlLMAnUfawcEVZyheb0Asq2W5Gn3k6OphgXIe4lmfgcyXgActd33ZIHi7pqdCvOtF57W5Huu7TEjHLnRkdiciH00vEurEtCg');
 const renderBackend = 'https://swipemate.onrender.com';
