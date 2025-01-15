@@ -46,18 +46,24 @@ os.makedirs(unattractive_dir, exist_ok=True)
 # Function to download the model from GCS
 def download_model_from_gcs(bucket_name, model_path, local_path):
     print("Inside download_model_from_gcs")
-    client = storage.Client()  # This will use the GOOGLE_APPLICATION_CREDENTIALS env var
-    if client:
-        print("We have console client")
-    bucket = client.bucket(bucket_name)
-    if bucket:
-        print("We have bucket")
-    blob = bucket.blob(model_path)
-    if blob:
-        print("We have bucket blob")
     try:
+        # This will use the GOOGLE_APPLICATION_CREDENTIALS env var
+        client = storage.Client()
+        if client:
+            print("We have console client")
+
+        bucket = client.bucket(bucket_name)
+        if bucket:
+            print("We have bucket")
+
+        blob = bucket.blob(model_path)
+        if blob:
+            print("We have bucket blob")
+
+        # Attempt to download the model file
         blob.download_to_filename(local_path)
         print(f"Model downloaded to {local_path}")
+
     except Exception as e:
         print(f"Failed to download model: {e}")
         exit(1)
@@ -241,13 +247,13 @@ def main(auth_token):
                         print(f"{user_id} is attractive")
                         if right_swipes < 500:
                             print(f"We are liking {user_id}")
-                            # like_profile(user_id)
+                            like_profile(user_id)
 
                     else:
                         time.sleep(random.uniform(3, 5))
                         print(f"{user_id} is unattractive")
                         print(f"we are disliking {user_id}")
-                        # pass_profile(user_id, s_number)
+                        pass_profile(user_id, s_number)
 
                     # Check if we have reached the swipe limit for this batch
                     if swipes_done >= swipes_in_batch:
