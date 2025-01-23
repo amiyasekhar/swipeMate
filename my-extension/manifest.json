@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SwipeMate",
-  "version": "3.0",
+  "version": "5.0",
   "description": "A Chrome Extension for SwipeMate AI",
 
   "permissions": [
@@ -12,7 +12,8 @@
   ],
 "host_permissions": [
   "https://tinder.com/*",
-  "https://api.gotinder.com/*"
+  "https://api.gotinder.com/*",
+  "https://swipemate.onrender.com/*"
 ],
   "background": {
     "service_worker": "src/background.js"
