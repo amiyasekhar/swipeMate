@@ -35,10 +35,10 @@ GCS_URI = f"gs://{BUCKET_NAME}/{MODEL_PATH}"
 print("Attempting to load model directly from GCS URI:", GCS_URI)
 
 # Create directories for saving classified images
-attractive_dir = './attractive'
-unattractive_dir = './unattractive'
-os.makedirs(attractive_dir, exist_ok=True)
-os.makedirs(unattractive_dir, exist_ok=True)
+# attractive_dir = './attractive'
+# unattractive_dir = './unattractive'
+# os.makedirs(attractive_dir, exist_ok=True)
+# os.makedirs(unattractive_dir, exist_ok=True)
 
 # Function to load and preprocess a single image from a URL
 def load_and_preprocess_image(image_url):
@@ -190,9 +190,9 @@ def main(auth_token):
                                 file.write(f"Photo is {label} with confidence {confidence}\n")
                                 if confidence > 0.7:
                                     attractive_profile = True
-                                    save_path = os.path.join(attractive_dir, f"1_TI_{image_counter}.jpg")
+                                    # save_path = os.path.join(attractive_dir, f"1_TI_{image_counter}.jpg")
                                 else:
-                                    save_path = os.path.join(unattractive_dir, f"0_TI_{image_counter}.jpg")
+                                    # save_path = os.path.join(unattractive_dir, f"0_TI_{image_counter}.jpg")
                                 print(f"Saving image to: {save_path}")
                                 os.rename(img_path, save_path)
                                 image_counter += 1
