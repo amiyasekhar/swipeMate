@@ -81,7 +81,7 @@ def main(auth_token):
     }
 
     # Attempt to load the model directly from the GCS URI
-    print("Loading model directly from GCS...")
+    print("Loading model directly from GCS (google cloud server)...")
     try:
         model = tf.keras.models.load_model(GCS_URI)
         print("Model loaded successfully from GCS!")
