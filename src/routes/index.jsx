@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom"; // Use createHashRouter
 import AppLayout from "../components/layout/AppLayout";
 import LoginPage from "../pages/LoginPage";
 import MainLayout from "../components/layout/MainLayout";
@@ -10,12 +10,11 @@ import ConnectAccountPage from "../pages/ConnectAccountPage";
 import InitialScreen from "../pages/InitialScreen";
 import TestPage from '../pages/TestPage'; // Adjust the path if necessary
 import CheckoutSuccess from "../pages/CheckoutSuccess";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 
-import { Login } from "@mui/icons-material";
-
-export const router = createBrowserRouter([
+export const router = createHashRouter([ // Use createHashRouter
   {
     path: "/",
     element: <AppLayout />,
@@ -35,12 +34,12 @@ export const router = createBrowserRouter([
         ]
       },
       {
-        path: "login",
-        element: <LoginPage />,
+        path: "privacy",
+        element: <PrivacyPolicy />,
         children: [
           {
             index: true,
-            element: <LoginPage/>
+            element: <PrivacyPolicy />
           },
         ]
       },
@@ -80,7 +79,7 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <SearchPage/>
+            element: <SearchPage />
           }
         ]
       },
@@ -94,9 +93,8 @@ export const router = createBrowserRouter([
           }
         ]
       },
-            {
+      {
         path: "checkout-success",
-        // element: <MainLayout />,
         children: [
           {
             index: true,
